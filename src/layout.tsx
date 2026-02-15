@@ -54,10 +54,19 @@ export const Layout = (props: { title?: string; children?: any; activePath?: str
       ${children}
     </main>
     
-    <footer style="margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); color: var(--text-dim); font-size: 12px; display: flex; justify-content: space-between;">
-      <span>${t.footer.server}</span>
-      <span>${t.footer.protocol}</span>
-      <span><a href="https://github.com/qingfeng/2020117" target="_blank">${t.footer.github}</a></span>
+    <footer style="margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); color: var(--text-dim); font-size: 12px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+      <div style="display: flex; gap: 16px;">
+        <a href="https://github.com/xiaotiyanlove-star/2020117-dashboard" target="_blank" style="color: var(--text-dim); transition: color 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-dim)'">
+          GITHUB: PROJECT
+        </a>
+        <a href="https://2020117.xyz" target="_blank" style="color: var(--text-dim); transition: color 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-dim)'">
+          NETWORK: 2020117.XYZ
+        </a>
+      </div>
+      <div style="display: flex; gap: 16px;">
+         <span>${t.footer.server}</span>
+         <span>${t.footer.protocol}</span>
+      </div>
     </footer>
   </div>
 </body>
