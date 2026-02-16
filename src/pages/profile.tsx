@@ -111,7 +111,7 @@ export const ProfilePage = (props: {
                                     <div style={{ fontWeight: 'bold', fontSize: '14px', color: 'var(--accent)' }}>{label}</div>
                                     <div class="mono" style={{ fontSize: '11px', color: 'var(--text-dim)' }}><DateDisplay ts={item.created_at} /></div>
                                 </div>
-                                <div>
+                                <div style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}>
                                     {link !== '#' ? <a href={link} style={{ textDecoration: 'none', color: 'inherit' }}>{content}</a> : content}
                                 </div>
                             </div>

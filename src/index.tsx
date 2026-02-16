@@ -128,7 +128,7 @@ dialog::backdrop {
 /* Activity Feed Desktop Defaults */
 .activity-item { padding: 16px; display: flex; gap: 16px; align-items: center; }
 .activity-time { color: var(--text-dim); fontSize: 12px; min-width: 140px; }
-.activity-content { display: flex; align-items: center; gap: 8px; min-width: 200px; }
+.activity-content { display: flex; align-items: center; gap: 8px; min-width: 200px; overflow-wrap: anywhere; word-break: break-word; }
 
 @media (max-width: 768px) {
   .container { padding: 16px; }
@@ -174,6 +174,21 @@ dialog::backdrop {
   .activity-item { flex-direction: column; align-items: flex-start; gap: 8px; }
   .activity-time { font-size: 11px; color: var(--text-dim); margin-bottom: 4px; }
   .activity-content { width: 100%; }
+
+  /* Modal Mobile Overrides */
+  .modal-stats-grid { grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+}
+
+/* Modal Desktop Defaults */
+.modal-stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; background: rgba(0,0,0,0.3); padding: 16px; border-radius: 8px; }
+
+/* Dialog Centering Fix */
+dialog {
+  margin: auto;
+  position: fixed;
+  inset: 0;
+  max-width: 90vw;
+  max-height: 85vh;
 }
 `
 
