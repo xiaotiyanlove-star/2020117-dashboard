@@ -1,37 +1,76 @@
 import { html } from 'hono/html'
 import { jsx } from 'hono/jsx'
 import type { Locale } from '../locales'
+import { Pagination } from '../components/Pagination'
+import { DateDisplay } from '../components/DateDisplay'
+import { Avatar } from '../components/Avatar'
+import type { Topic, PaginationMeta } from '../types'
 
-export const FeedPage = (props: { feeds: any[]; t: Locale }) => {
-    const { feeds, t } = props
-
-    if (feeds.length === 0) {
-        return <div class="loading">{t.feed.loading}</div>
-    }
+export const FeedPage = (props: { topics: Topic[]; meta: PaginationMeta; t: Locale; query?: any }) => {
+    const { topics, meta, t, query } = props
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '800px', margin: '0 auto' }}>
-            {props.feeds.map((topic) => (
-                <div class="card">
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                            <div style={{ fontWeight: '700', color: 'var(--accent)' }}>{topic.author?.display_name || topic.author?.username}</div>
-                            <div class="mono" style={{ fontSize: '12px', color: 'var(--text-dim)' }}>{new Date(topic.created_at).toLocaleString()}</div>
+        <div>
+            <form action="/feed" method="get" style={{ marginBottom: '24px', display: 'flex', gap: '8px' }}>
+                <input
+                    type="text"
+                    name="keyword"
+                    placeholder="Search topics..."
+                    value={query?.keyword || ''}
+                    style={{ flex: 1, padding: '8px 12px', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--bg-card)', color: 'var(--text-main)' }}
+                />
+                <button
+                    type="submit"
+                    class="badge accent"
+                    style={{ cursor: 'pointer', border: 'none', padding: '0 16px' }}
+                >
+                    SEARCH
+                </button>
+            </form>
+
+            <div class="grid" style={{ gridTemplateColumns: '1fr', gap: '0' }}>
+                {topics.map(topic => (
+                    <div class="feed-item" style={{ display: 'flex', gap: '16px', padding: '20px 0', borderBottom: '1px solid var(--border)' }}>
+                        <div style={{ flexShrink: 0 }}>
+                            <Avatar url={topic.author?.avatar_url} name={topic.author?.username || 'Unknown'} pubkey={topic.author?.pubkey} size={48} />
                         </div>
-                        <div class="badge">TOPIC</div>
-                    </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '6px' }}>
+                                <div style={{ display: 'flex', gap: '8px', alignItems: 'baseline' }}>
+                                    <a href={`/u/${topic.author?.username || topic.author?.pubkey}`} style={{ fontWeight: 'bold', fontSize: '15px', textDecoration: 'none', color: 'var(--text-main)' }}>
+                                        {topic.author?.display_name || topic.author?.username || 'Unknown'}
+                                    </a>
+                                    <span style={{ fontSize: '13px', color: 'var(--text-dim)' }}>
+                                        <DateDisplay ts={topic.created_at} />
+                                    </span>
+                                </div>
+                                {topic.like_count > 0 && <div class="badge" style={{ fontSize: '10px' }}>{topic.like_count} ❤</div>}
+                            </div>
 
-                    <h3 style={{ marginBottom: '8px', fontSize: '18px' }}>{topic.title}</h3>
-                    <div style={{ color: '#ccc', lineHeight: '1.5', marginBottom: '16px' }}>
-                        {topic.content}
-                    </div>
+                            <h3 style={{ margin: '0 0 8px 0', fontSize: '16px', fontWeight: 'bold' }}>
+                                <a href={`/feed/${topic.id}`} style={{ color: 'var(--text-main)', textDecoration: 'none' }}>{topic.title}</a>
+                            </h3>
 
-                    <div style={{ display: 'flex', gap: '16px', fontSize: '13px', color: 'var(--text-dim)' }}>
-                        <span>♥ {topic.like_count}</span>
-                        <span>💬 {topic.comment_count}</span>
+                            <div style={{ fontSize: '15px', color: '#ccc', lineHeight: '1.5', whiteSpace: 'pre-wrap', marginBottom: '12px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 5, WebkitBoxOrient: 'vertical' }}>
+                                {topic.content}
+                            </div>
+
+                            <div style={{ display: 'flex', gap: '24px', fontSize: '13px', color: 'var(--text-dim)' }}>
+                                <a href={`/feed/${topic.id}`} style={{ display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none', color: 'inherit' }}>
+                                    <span>💬</span> {topic.comment_count || 0}
+                                </a>
+                                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <span>↻</span> {topic.repost_count || 0}
+                                </span>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            ))}
+                ))}
+            </div>
+
+            {topics.length === 0 && <div class="loading" style={{ padding: '40px', textAlign: 'center', color: 'var(--text-dim)' }}>No topics found.</div>}
+
+            <Pagination meta={meta} path="/feed" query={query} />
         </div>
     )
 }

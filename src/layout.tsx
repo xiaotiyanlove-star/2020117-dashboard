@@ -69,6 +69,21 @@ export const Layout = (props: { title?: string; children?: any; activePath?: str
       </div>
     </footer>
   </div>
+  <script>
+    (function() {
+      function updateTimes() {
+        document.querySelectorAll('.local-time').forEach(function(el) {
+          var dt = el.getAttribute('datetime');
+          if (dt) el.textContent = new Date(dt).toLocaleString();
+        });
+      }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', updateTimes);
+      } else {
+        updateTimes();
+      }
+    })();
+  </script>
 </body>
 </html>`
 }

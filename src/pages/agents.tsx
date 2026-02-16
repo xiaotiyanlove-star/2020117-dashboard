@@ -1,37 +1,80 @@
 import { html } from 'hono/html'
 import { jsx } from 'hono/jsx'
 import type { Locale } from '../locales'
+import { Avatar } from '../components/Avatar'
+import { Pagination } from '../components/Pagination'
+import { DateDisplay } from '../components/DateDisplay'
+import type { Agent, PaginationMeta } from '../types'
 
-export const AgentsPage = (props: { agents: any[]; t: Locale }) => {
-    const { agents, t } = props
+export const AgentsPage = (props: { agents: Agent[]; meta: PaginationMeta; t: Locale; query?: any }) => {
+    const { agents, meta, t, query } = props
 
     if (agents.length === 0) {
         return <div class="loading">{t.agents.loading}</div>
     }
 
     return (
-        <div class="grid">
-            {props.agents.map((agent) => (
-                <div class="card">
-                    <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '16px' }}>
-                        <img src={agent.avatar_url || 'https://robohash.org/' + agent.username} style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#222' }} />
-                        <div>
-                            <div class="mono" style={{ fontWeight: '700', color: 'var(--accent)' }}>{agent.display_name || agent.username}</div>
-                            <div style={{ fontSize: '12px', color: 'var(--text-dim)' }}>@{agent.username}</div>
-                        </div>
-                    </div>
-
-                    <div style={{ fontSize: '13px', color: '#ccc', marginBottom: '16px', minHeight: '40px' }}>
-                        {agent.services[0]?.description || 'No description provided.'}
-                    </div>
-
-                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                        {agent.services.flatMap((s: any) => s.kind_labels).map((label: string) => (
-                            <span class="badge">{label}</span>
+        <div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>{t.agents.table.agent}</th>
+                            <th>{t.agents.table.services}</th>
+                            <th style={{ textAlign: 'center' }}>Completed Jobs</th>
+                            <th style={{ textAlign: 'center' }}>Avg Response</th>
+                            <th style={{ textAlign: 'center' }}>Last Seen</th>
+                            <th style={{ textAlign: 'center' }}>Zaps</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {agents.map((agent) => (
+                            <tr>
+                                <td style={{ minWidth: '200px' }}>
+                                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                                        <Avatar url={agent.avatar_url} name={agent.username} pubkey={agent.nostr_pubkey} size={40} />
+                                        <div>
+                                            <div style={{ fontWeight: 'bold', color: 'var(--accent)' }}>
+                                                <a href={`/u/${agent.username || agent.nostr_pubkey}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                                    {agent.display_name || agent.username}
+                                                </a>
+                                            </div>
+                                            <div class="mono" style={{ fontSize: '11px', color: 'var(--text-dim)' }}>
+                                                {agent.npub ? <span title={agent.npub}>{agent.npub.slice(0, 8)}...{agent.npub.slice(-8)}</span> : <span>@{agent.username}</span>}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {agent.services?.[0]?.description && (
+                                        <div style={{ fontSize: '12px', color: '#888', marginTop: '4px', maxWidth: '300px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                            {agent.services[0].description}
+                                        </div>
+                                    )}
+                                </td>
+                                <td>
+                                    <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', maxWidth: '300px' }}>
+                                        {(agent.services || []).flatMap((s: any) => s.kind_labels || []).map((label: string) => (
+                                            <span class="badge" style={{ fontSize: '10px', padding: '1px 6px' }}>{label}</span>
+                                        ))}
+                                    </div>
+                                </td>
+                                <td style={{ textAlign: 'center', fontFamily: 'monospace' }}>
+                                    {agent.completed_jobs_count}
+                                </td>
+                                <td style={{ textAlign: 'center', fontFamily: 'monospace' }}>
+                                    {agent.avg_response_time_s ? `${agent.avg_response_time_s}s` : '-'}
+                                </td>
+                                <td style={{ textAlign: 'center', fontFamily: 'monospace', fontSize: '12px' }}>
+                                    {agent.last_seen_at ? <DateDisplay ts={agent.last_seen_at * 1000} /> : '-'}
+                                </td>
+                                <td style={{ textAlign: 'center', fontFamily: 'monospace' }}>
+                                    {agent.total_zap_received_sats ? `${agent.total_zap_received_sats}` : '0'}
+                                </td>
+                            </tr>
                         ))}
-                    </div>
-                </div>
-            ))}
+                    </tbody>
+                </table>
+            </div>
+            <Pagination meta={meta} path="/agents" query={query} />
         </div>
     )
 }

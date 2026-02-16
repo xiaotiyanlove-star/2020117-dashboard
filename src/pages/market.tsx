@@ -1,232 +1,186 @@
 import { html } from 'hono/html'
 import { jsx } from 'hono/jsx'
 import type { Locale } from '../locales'
+import { Pagination } from '../components/Pagination'
+import { DateDisplay } from '../components/DateDisplay'
+import type { Job, PaginationMeta } from '../types'
 
-const KindBadge = ({ kind, t }: { kind: number; t: Locale }) => {
-  const map: Record<number, { label: string; class: string }> = {
-    5100: { label: t.market.filters.text, class: 'accent' },
-    5200: { label: t.market.filters.image, class: 'warn' },
-    5250: { label: t.market.filters.video, class: 'warn' },
-    5300: { label: t.market.filters.text_to_speech, class: '' },
-    5301: { label: t.market.filters.speech_to_text, class: '' },
-    5302: { label: t.market.filters.translation, class: '' },
-    5303: { label: t.market.filters.summarization, class: '' },
-  }
-  const meta = map[kind] || { label: `KIND ${kind}`, class: '' }
-  return <span class={`badge ${meta.class}`}>{meta.label}</span>
-}
+export const MarketPage = (props: {
+  data: { jobs: Job[], meta: PaginationMeta };
+  filters: { kind?: string; status?: string; sort?: string };
+  t: Locale;
+  query?: any
+}) => {
+  const { data, filters, t, query } = props
+  const { jobs, meta } = data
 
-export const MarketPage = (props: { data: any; currentKind?: string; t: Locale }) => {
-  const { data, currentKind, t } = props
-  const jobs = data.jobs || []
+  const kinds = [
+    { id: '5100', label: t.market.filters.text },
+    { id: '5200', label: t.market.filters.image },
+    { id: '5250', label: t.market.filters.video },
+    { id: '5300', label: t.market.filters.text_to_speech },
+    { id: '5301', label: t.market.filters.speech_to_text },
+    { id: '5302', label: t.market.filters.translation },
+    { id: '5303', label: t.market.filters.summarization },
+  ]
 
-  const link = (kind?: string) => {
+  const statuses = ['open', 'processing', 'completed', 'error', 'cancelled']
+  const sortOptions = [
+    { value: 'newest', label: 'Newest' },
+    { value: 'bid_desc', label: 'Bid (High-Low)' },
+    { value: 'bid_asc', label: 'Bid (Low-High)' },
+  ]
+
+  // Helper for filter links
+  const filterLink = (key: string, val: string | undefined) => {
     const params = new URLSearchParams()
-    if (kind) params.set('kind', kind)
+    if (query.lang) params.set('lang', query.lang)
+    if (filters.kind) params.set('kind', filters.kind)
+    if (filters.status) params.set('status', filters.status)
+    if (filters.sort) params.set('sort', filters.sort)
+
+    if (val) params.set(key, val)
+    else params.delete(key)
+
+    // Reset page on filter change
+    params.delete('page')
+
     return `/market?${params.toString()}`
   }
 
-  const modalScript = html`
-    <script>
-      function openPreview(job) {
-        const modal = document.getElementById('preview-modal');
-        const content = document.getElementById('preview-content');
-        const resultArea = document.getElementById('preview-result');
-        const resultContainer = document.getElementById('result-container');
-        const modalTitle = document.getElementById('modal-title');
-        const modalMeta = document.getElementById('modal-meta');
-        
-        // Safe decode helper
-        const decode = (str) => {
-            if (!str) return '';
-            const txt = document.createElement('textarea');
-            txt.innerHTML = str;
-            return txt.value;
-        };
-
-        modalTitle.textContent = 'JOB ' + job.id.slice(0, 8);
-        modalMeta.innerHTML = '<span class="badge accent">' + job.bid + ' SATS</span> ' + 
-                            '<span class="badge">' + job.kindLabel + '</span>';
-
-        content.textContent = decode(job.input);
-        
-        if (job.result) {
-            resultArea.textContent = decode(job.result);
-            resultContainer.style.display = 'block';
-        } else {
-            resultContainer.style.display = 'none';
-        }
-        
-        modal.showModal();
-      }
-      function closePreview() {
-        document.getElementById('preview-modal').close();
-      }
-      
-      // Close on backdrop click
-      document.getElementById('preview-modal').addEventListener('click', (e) => {
-        const rect = e.target.getBoundingClientRect();
-        if (rect.left > e.clientX || rect.right < e.clientX || 
-            rect.top > e.clientY || rect.bottom < e.clientY) {
-            closePreview();
-        }
-      });
-    </script>
-    <style>
-      dialog::backdrop {
-        background: rgba(0, 0, 0, 0.8);
-        backdrop-filter: blur(4px);
-      }
-      dialog {
-        margin: auto;
-        border: 1px solid var(--border);
-        background: var(--bg-card);
-        color: var(--text-main);
-        border-radius: 12px;
-        max-width: 800px;
-        width: 90%;
-        box-shadow: 0 0 50px rgba(0, 255, 200, 0.1);
-        inset: 0;
-        position: fixed;
-        animation: slideIn 0.2s ease-out;
-      }
-      @keyframes slideIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      /* Custom Filter Styles */
-      .filter-group {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        padding: 4px;
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        margin-bottom: 24px;
-      }
-      .filter-btn {
-        padding: 8px 16px;
-        border-radius: 6px;
-        font-size: 13px;
-        color: var(--text-dim);
-        background: transparent;
-        border: 1px solid transparent;
-        transition: all 0.2s;
-        text-transform: uppercase;
-        font-family: var(--font-mono);
-        letter-spacing: 0.5px;
-        flex: 1;
-        text-align: center;
-        white-space: nowrap;
-        cursor: pointer;
-      }
-      .filter-btn:hover {
-        color: var(--text-main);
-        background: var(--bg-hover);
-      }
-      .filter-btn.active {
-        color: var(--bg);
-        background: var(--accent);
-        font-weight: 700;
-        box-shadow: 0 0 15px var(--accent-dim);
-      }
-    </style>
-  `
-
   return (
     <div>
-      {modalScript}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <a href={filterLink('kind', undefined)} class={`badge ${!filters.kind ? 'accent' : ''}`} style={{ padding: '8px 12px', textDecoration: 'none' }}>
+            ALL
+          </a>
+          {kinds.map(k => (
+            <a href={filterLink('kind', k.id)} class={`badge ${filters.kind === k.id ? 'accent' : ''}`} style={{ padding: '8px 12px', textDecoration: 'none' }}>
+              {k.label.toUpperCase()}
+            </a>
+          ))}
+        </div>
 
-      <div class="filter-group">
-        <a href={link()} class={`filter-btn ${!currentKind ? 'active' : ''}`}>{t.market.filters.all}</a>
-        <a href={link('5100')} class={`filter-btn ${currentKind === '5100' ? 'active' : ''}`}>{t.market.filters.text}</a>
-        <a href={link('5200')} class={`filter-btn ${currentKind === '5200' ? 'active' : ''}`}>{t.market.filters.image}</a>
-        <a href={link('5250')} class={`filter-btn ${currentKind === '5250' ? 'active' : ''}`}>{t.market.filters.video}</a>
-        <a href={link('5300')} class={`filter-btn ${currentKind === '5300' ? 'active' : ''}`}>{t.market.filters.text_to_speech}</a>
-        <a href={link('5301')} class={`filter-btn ${currentKind === '5301' ? 'active' : ''}`}>{t.market.filters.speech_to_text}</a>
-        <a href={link('5302')} class={`filter-btn ${currentKind === '5302' ? 'active' : ''}`}>{t.market.filters.translation}</a>
-        <a href={link('5303')} class={`filter-btn ${currentKind === '5303' ? 'active' : ''}`}>{t.market.filters.summarization}</a>
+        <form action="/market" method="get" style={{ display: 'flex', gap: '8px' }}>
+          {filters.kind && <input type="hidden" name="kind" value={filters.kind} />}
+
+          <select
+            name="status"
+            onchange="this.form.submit()"
+            style={{ background: 'var(--bg-card)', color: 'var(--text-main)', border: '1px solid var(--border)', padding: '6px', borderRadius: '4px' }}
+          >
+            <option value="" selected={!filters.status}>Status: All</option>
+            {statuses.map(s => <option value={s} selected={filters.status === s}>{s.toUpperCase()}</option>)}
+          </select>
+
+          <select
+            name="sort"
+            onchange="this.form.submit()"
+            style={{ background: 'var(--bg-card)', color: 'var(--text-main)', border: '1px solid var(--border)', padding: '6px', borderRadius: '4px' }}
+          >
+            {sortOptions.map(s => <option value={s.value} selected={filters.sort === s.value}>{s.label}</option>)}
+          </select>
+        </form>
       </div>
 
       <div class="table-container">
         <table>
           <thead>
             <tr>
-              <th>{t.market.table.id}</th>
+              <th style={{ width: '80px' }}>ID</th>
               <th>{t.market.table.kind}</th>
-              <th>{t.market.table.bid}</th>
-              <th>{t.market.table.status}</th>
+              <th style={{ width: '80px' }}>{t.market.table.status}</th>
               <th>{t.market.table.input}</th>
-              <th>{t.market.table.created}</th>
+              <th style={{ textAlign: 'right' }}>{t.market.table.bid}</th>
+              <th style={{ textAlign: 'right' }}>Time</th>
             </tr>
           </thead>
           <tbody>
-            {jobs.map((job: any) => {
-              // Pre-calculate label to pass to modal
-              const kindMap: Record<number, string> = {
-                5100: t.market.filters.text,
-                5200: t.market.filters.image,
-                5250: t.market.filters.video,
-                5300: t.market.filters.text_to_speech,
-                5301: t.market.filters.speech_to_text,
-                5302: t.market.filters.translation,
-                5303: t.market.filters.summarization,
-              }
-              const kindLabel = kindMap[job.kind] || `KIND ${job.kind}`
-              const safeJob = {
-                id: job.id,
-                bid: job.bid_sats,
-                kindLabel: kindLabel,
-                input: job.input,
-                result: job.result
-              }
-              // Serialize carefully
-              const json = JSON.stringify(safeJob).replace(/'/g, "\\'")
-
-              return (
-                <tr onclick={`openPreview(${json})`} style="cursor: pointer;">
-                  <td class="mono" title={job.id}>{job.id.slice(0, 8)}...</td>
-                  <td><KindBadge kind={job.kind} t={t} /></td>
-                  <td class="text-accent">{job.bid_sats}</td>
-                  <td>
-                    <span class={`status-dot ${job.status}`}></span>
-                    {job.status.toUpperCase()}
-                  </td>
-                  <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-dim);">
-                    {job.input}
-                  </td>
-                  <td class="mono">{new Date(job.created_at).toLocaleTimeString()}</td>
-                </tr>
-              )
-            })}
+            {jobs.map((job) => (
+              <tr onclick={`document.getElementById('dialog-${job.id}').showModal()`} style={{ cursor: 'pointer' }}>
+                <td class="mono" style={{ color: 'var(--accent)' }}>{job.id.slice(0, 8)}</td>
+                <td><span class="badge">{job.kind}</span></td>
+                <td>
+                  <span class={`badge ${job.status === 'open' ? 'accent' : job.status === 'error' ? 'error' : ''}`}>
+                    {job.status}
+                  </span>
+                </td>
+                <td style={{ maxWidth: '300px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {job.input}
+                </td>
+                <td class="mono" style={{ textAlign: 'right', color: 'gold' }}>{job.bid_sats}</td>
+                <td class="mono" style={{ textAlign: 'right', fontSize: '12px' }}>
+                  <DateDisplay ts={job.created_at} />
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
 
-      {jobs.length === 0 && <div class="loading">{t.market.loading}</div>}
-
-      <dialog id="preview-modal">
-        <div style="padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02);">
-          <div style="display: flex; gap: 12px; align-items: center;">
-            <h3 id="modal-title" style="margin: 0; font-family: var(--font-mono); font-size: 18px; color: var(--accent);">JOB DETAIL</h3>
-            <div id="modal-meta"></div>
+      {/* Dialogs for details */}
+      {jobs.map(job => (
+        <dialog id={`dialog-${job.id}`} style={{
+          background: 'var(--bg-card)', color: 'var(--text-main)', border: '1px solid var(--border)', borderRadius: '8px', padding: '0',
+          maxWidth: '600px', width: '90%', boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+          position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', margin: '0'
+        }}>
+          <div style={{ padding: '16px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div class="mono" style={{ color: 'var(--accent)' }}>JOB {job.id}</div>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <span class={`badge ${job.status === 'open' ? 'accent' : job.status === 'completed' ? '' : 'error'}`}>{job.status}</span>
+              <span class="badge">{job.kind}</span>
+              <span class="mono" style={{ color: 'gold' }}>{job.bid_sats} sats</span>
+            </div>
           </div>
-          <button onclick="closePreview()" style="background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 24px; line-height: 1;">&times;</button>
-        </div>
-        <div style="padding: 24px; max-height: 70vh; overflow-y: auto;">
-          <h4 style="color: var(--text-dim); font-size: 11px; text-transform: uppercase; margin-bottom: 12px; font-family: var(--font-mono);">{t.market.preview_modal.input}</h4>
-          <pre id="preview-content" style="white-space: pre-wrap; font-family: var(--font-mono); font-size: 13px; color: var(--text-main); background: #000; padding: 16px; border-radius: 6px; border: 1px solid var(--border); overflow-x: auto;"></pre>
-
-          <div id="result-container" style="margin-top: 24px; display: none;">
-            <h4 style="color: var(--text-dim); font-size: 11px; text-transform: uppercase; margin-bottom: 12px; font-family: var(--font-mono);">{t.market.preview_modal.result}</h4>
-            <pre id="preview-result" style="white-space: pre-wrap; font-family: var(--font-mono); font-size: 13px; color: var(--accent); background: #000; padding: 16px; border-radius: 6px; border: 1px solid var(--accent-dim); overflow-x: auto;"></pre>
+          <div style={{ padding: '24px', overflowY: 'auto', maxHeight: '60vh' }}>
+            <div style={{ display: 'flex', gap: '24px', marginBottom: '24px', fontSize: '13px', color: 'var(--text-dim)' }}>
+              <div>
+                <span style={{ display: 'block', fontSize: '10px', color: '#555', marginBottom: '2px' }}>CREATED</span>
+                <DateDisplay ts={job.created_at} />
+              </div>
+              <div>
+                <span style={{ display: 'block', fontSize: '10px', color: '#555', marginBottom: '2px' }}>INPUT TYPE</span>
+                {job.input_type || 'text'}
+              </div>
+            </div>
+            <div style={{ marginBottom: '24px' }}>
+              <div class="mono" style={{ fontSize: '12px', color: 'var(--text-dim)', marginBottom: '8px' }}>INPUT</div>
+              <div style={{ background: '#000', padding: '12px', borderRadius: '4px', whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}>
+                {job.input}
+              </div>
+            </div>
+            {job.output && (
+              <div>
+                <div class="mono" style={{ fontSize: '12px', color: 'var(--text-dim)', marginBottom: '8px' }}>RESULT</div>
+                <div style={{ background: '#111', padding: '12px', borderRadius: '4px', whiteSpace: 'pre-wrap', fontFamily: 'monospace', color: 'var(--accent)' }}>
+                  {job.output}
+                </div>
+              </div>
+            )}
+            {job.payment_request && (
+              <div style={{ marginTop: '24px' }}>
+                <div class="mono" style={{ fontSize: '12px', color: 'var(--text-dim)', marginBottom: '8px' }}>PAYMENT REQUEST</div>
+                <div style={{ background: '#111', padding: '12px', borderRadius: '4px', wordBreak: 'break-all', fontSize: '10px', color: '#ccc' }}>
+                  {job.payment_request}
+                </div>
+              </div>
+            )}
           </div>
-        </div>
-        <div style="padding: 16px 24px; border-top: 1px solid var(--border); text-align: right; background: rgba(255,255,255,0.02);">
-          <button onclick="closePreview()" class="filter-btn active" style="min-width: 100px;">{t.market.preview_modal.close}</button>
-        </div>
-      </dialog>
+          <div style={{ padding: '16px', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+            <button onclick={`navigator.clipboard.writeText(\`${job.input.replace(/`/g, '\\`')}\`)`} class="badge" style={{ cursor: 'pointer', padding: '8px 16px', background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-dim)' }}>Copy Input</button>
+            <button
+              onclick="this.closest('dialog').close()"
+              style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-main)', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer' }}
+            >Close</button>
+          </div>
+        </dialog>
+      ))}
+
+      {jobs.length === 0 && <div class="loading" style={{ padding: '40px', textAlign: 'center', color: 'var(--text-dim)' }}>No jobs found matching your filters.</div>}
+
+      <Pagination meta={meta} path="/market" query={{ ...query, ...filters }} />
     </div>
   )
 }

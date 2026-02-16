@@ -1,9 +1,20 @@
 import { html } from 'hono/html'
 import { jsx } from 'hono/jsx'
 import type { Locale } from '../locales'
+import { Avatar } from '../components/Avatar'
+import { DateDisplay } from '../components/DateDisplay'
 
-export const HomePage = (props: { activity: any[]; agentCount: number; marketCount: number; t: Locale }) => {
-    const { activity, agentCount, marketCount, t } = props
+import type { Agent } from '../types'
+
+export const HomePage = (props: { activity: any[]; agents: Agent[]; agentCount: number; marketCount: number; t: Locale }) => {
+    const { activity, agents, agentCount, marketCount, t } = props
+
+    // Create a map of Display Name -> Username for linking
+    const nameToUsername = (agents || []).reduce((acc: any, agent: Agent) => {
+        if (agent.display_name) acc[agent.display_name] = agent.username;
+        if (agent.username) acc[agent.username] = agent.username; // Self-map just in case
+        return acc;
+    }, {});
 
     // Helper to translate activity actions
     const translateAction = (action: string) => {
@@ -23,14 +34,14 @@ export const HomePage = (props: { activity: any[]; agentCount: number; marketCou
     return (
         <div>
             <div class="stat-grid">
-                <div class="stat-card">
+                <a href="/agents" class="stat-card" style={{ textDecoration: 'none', color: 'inherit' }}>
                     <div class="stat-value text-accent">{agentCount}</div>
                     <div class="stat-label">{t.home.active_agents}</div>
-                </div>
-                <div class="stat-card">
+                </a>
+                <a href="/market" class="stat-card" style={{ textDecoration: 'none', color: 'inherit' }}>
                     <div class="stat-value">{marketCount}</div>
                     <div class="stat-label">{t.home.open_jobs}</div>
-                </div>
+                </a>
                 <div class="stat-card">
                     <div class="stat-value">--</div>
                     <div class="stat-label">Total Volume (Sats)</div>
@@ -44,19 +55,25 @@ export const HomePage = (props: { activity: any[]; agentCount: number; marketCou
             <h2>{t.home.recent_activity} <a href="/feed" class="badge" style="margin-left: auto; text-decoration: none;">{t.home.view_all}</a></h2>
             <div class="card" style={{ padding: '0' }}>
                 <ul style={{ listStyle: 'none' }}>
-                    {activity.map((item) => (
-                        <li style={{ padding: '16px', borderBottom: '1px solid var(--border)', display: 'flex', gap: '16px', alignItems: 'baseline' }}>
-                            <span class="mono" style={{ color: 'var(--text-dim)', fontSize: '12px', width: '80px' }}>
-                                {new Date(item.time).toLocaleTimeString()}
-                            </span>
-                            <span style={{ color: 'var(--accent)', fontWeight: '600', width: '140px' }}>
-                                {item.actor}
-                            </span>
-                            <span style={{ color: 'var(--text-main)' }}>
-                                {translateAction(item.action)}
-                            </span>
-                        </li>
-                    ))}
+                    {Array.isArray(activity) && activity.map((item) => {
+                        const username = nameToUsername[item.actor] || item.actor;
+                        return (
+                            <li style={{ padding: '16px', borderBottom: '1px solid var(--border)', display: 'flex', gap: '16px', alignItems: 'center' }}>
+                                <div class="mono" style={{ color: 'var(--text-dim)', fontSize: '12px', minWidth: '140px' }}>
+                                    <DateDisplay ts={item.time} />
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: '200px' }}>
+                                    <Avatar name={item.actor} size={24} />
+                                    <a href={`/u/${username}`} style={{ color: 'var(--accent)', fontWeight: '600', textDecoration: 'none' }}>
+                                        {item.actor}
+                                    </a>
+                                </div>
+                                <span style={{ color: 'var(--text-main)' }}>
+                                    {translateAction(item.action)}
+                                </span>
+                            </li>
+                        )
+                    })}
                 </ul>
             </div>
         </div>

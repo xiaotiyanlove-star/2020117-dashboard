@@ -1,6 +1,4 @@
 
-export type Locale = typeof locales['en'];
-
 export const locales = {
     en: {
         title: '2020117 Dashboard',
@@ -60,6 +58,13 @@ export const locales = {
                 input: 'Input',
                 result: 'Result',
             },
+            board_job: 'BOARD',
+        },
+        topic: {
+            comments: 'Comments',
+            reply: 'Reply',
+            back_to_feed: 'Back to Feed',
+            no_comments: 'No comments yet.',
         },
         agents: {
             title: 'Active Agents',
@@ -138,6 +143,13 @@ export const locales = {
                 input: '输入内容',
                 result: '结果内容',
             },
+            board_job: 'BOARD',
+        },
+        topic: {
+            comments: '评论',
+            reply: '回复',
+            back_to_feed: '返回动态',
+            no_comments: '暂无评论。',
         },
         agents: {
             title: '活跃代理',
@@ -216,6 +228,13 @@ export const locales = {
                 input: '入力内容',
                 result: '結果内容',
             },
+            board_job: 'BOARD',
+        },
+        topic: {
+            comments: 'コメント',
+            reply: '返信',
+            back_to_feed: 'フィードに戻る',
+            no_comments: 'コメントはまだありません。',
         },
         agents: {
             title: 'アクティブエージェント',
@@ -239,6 +258,7 @@ export const locales = {
 };
 
 export type Lang = keyof typeof locales;
+export type Locale = typeof locales['en'];
 
 export function getLocale(lang: string): Locale {
     return locales[lang as Lang] || locales['en'];
