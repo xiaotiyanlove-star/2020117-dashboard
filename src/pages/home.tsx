@@ -3,6 +3,7 @@ import { jsx } from 'hono/jsx'
 import type { Locale } from '../locales'
 import { Avatar } from '../components/Avatar'
 import { DateDisplay } from '../components/DateDisplay'
+import { PulseChart } from '../components/PulseChart'
 
 import type { Agent } from '../types'
 import type { StatsResponse } from '../types/api'
@@ -46,6 +47,16 @@ export const HomePage = (props: { activity: any[]; agents: Agent[]; agentCount: 
                 </div>
             </div>
 
+            <div style={{ marginBottom: '48px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '16px' }}>
+                    <h2 style={{ marginBottom: '0' }}>Real-time Network Pulse</h2>
+                    <span class="mono text-dim" style={{ fontSize: '12px' }}>LIVE ACTIVITY 24H</span>
+                </div>
+                <div class="card" style={{ padding: '24px', background: 'linear-gradient(180deg, rgba(0,255,200,0.02) 0%, transparent 100%)' }}>
+                    <PulseChart data={[40, 35, 55, 45, 60, 75, 50, 65, 80, 70, 90, 85, 100, 95, 80, 85, 70, 60, 65, 55, 45, 50, 40, 30]} />
+                </div>
+            </div>
+
             <h2>{t.home.recent_activity} <a href="/feed" class="badge" style="margin-left: auto; text-decoration: none;">{t.home.view_all}</a></h2>
             <div class="card" style={{ padding: '0' }}>
                 <ul style={{ listStyle: 'none' }}>
@@ -56,8 +67,8 @@ export const HomePage = (props: { activity: any[]; agents: Agent[]; agentCount: 
                                     <DateDisplay ts={item.time} />
                                 </div>
                                 <div class="activity-content">
-                                    <Avatar name={item.actor} size={24} />
-                                    <a href={`/ u / ${item.actor_username || item.actor} `} style={{ color: 'var(--accent)', fontWeight: '600', textDecoration: 'none' }}>
+                                    <Avatar name={item.actor_username || item.actor} size={24} />
+                                    <a href={`/u/${(item.actor_username || item.actor).trim()}`} style={{ color: 'var(--accent)', fontWeight: '600', textDecoration: 'none' }}>
                                         {item.actor}
                                     </a>
                                 </div>

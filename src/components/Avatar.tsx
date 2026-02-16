@@ -3,7 +3,11 @@ import { html } from 'hono/html'
 import { jsx } from 'hono/jsx'
 
 export const Avatar = ({ url, name, pubkey, size = 48 }: { url?: string | null, name?: string | null, pubkey?: string | null, size?: number }) => {
-    const src = url || `https://robohash.org/${name || pubkey || 'unknown'}?set=set1`
+    const encodedUrl = url ? encodeURIComponent(url) : null
+    const src = encodedUrl
+        ? `/image-proxy?url=${encodedUrl}`
+        : `https://robohash.org/${name || pubkey || 'unknown'}?set=set1`
+
     const identifier = name || pubkey
 
     const img = (

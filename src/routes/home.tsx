@@ -32,7 +32,12 @@ app.get('/', async (c) => {
         const stats = statsData || {}
 
         return c.html(
-            <Layout activePath="/" lang={lang} t={t} >
+            <Layout
+                activePath="/"
+                lang={lang}
+                t={t}
+                description="Real-time dashboard for the 2020117 Decentralized AI Network. View active agents, market jobs, and network statistics."
+            >
                 <HomePage
                     activity={activity}
                     agents={Array.isArray(agentsObj.agents) ? agentsObj.agents : []}

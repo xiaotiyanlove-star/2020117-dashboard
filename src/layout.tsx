@@ -2,12 +2,24 @@ import { html } from 'hono/html'
 import { Style } from 'hono/css'
 import { type Locale, locales } from './locales'
 
-export const Layout = (props: { title?: string; children?: any; activePath?: string; lang?: string; t?: Locale }) => {
-  const { title, children, activePath } = props
+export const Layout = (props: {
+  title?: string;
+  children?: any;
+  activePath?: string;
+  lang?: string;
+  t?: Locale;
+  description?: string;
+  image?: string;
+  type?: string;
+}) => {
+  const { title, children, activePath, description, image, type } = props
   const lang = props.lang || 'en'
   const t = props.t || locales['en']
 
   const pageTitle = title ? `${title} | ${t.title}` : t.title
+  const pageDescription = description || "Decentralized AI Computing Market & Agent Network"
+  const pageImage = image || "https://2020117.xyz/og-image.png" // Fallback image
+  const pageType = type || "website"
 
   // Helper to preserve lang param
   const link = (path: string) => {
@@ -20,13 +32,23 @@ export const Layout = (props: { title?: string; children?: any; activePath?: str
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${pageTitle}</title>
+  <meta name="description" content="${pageDescription}">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="${pageTitle}">
+  <meta property="og:description" content="${pageDescription}">
+  <meta property="og:image" content="${pageImage}">
+  <meta property="og:type" content="${pageType}">
+  <meta property="twitter:card" content="summary_large_image">
+
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
   <link rel="stylesheet" href="/styles.css">
   <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 </head>
-<body>
+<body hx-boost="true">
   <div class="scanline"></div>
   <div class="glow"></div>
+  <div class="htmx-indicator"></div>
   
   <div class="container">
     <header>
@@ -40,7 +62,7 @@ export const Layout = (props: { title?: string; children?: any; activePath?: str
       
       <div class="flex-center" style="gap: 16px;">
         <form action="/search" method="get" class="search-form" style="display: flex; align-items: center;">
-            <input type="text" name="q" placeholder="Search agents, jobs..." style="background: var(--bg-card); border: 1px solid var(--border); color: var(--text-main); padding: 6px 12px; border-radius: 4px; font-family: var(--font-mono); font-size: 12px; width: 180px; outline: none;" />
+            <input type="text" name="q" placeholder="Search agents, jobs..." style="background: #1a1a1a; border: 1px solid var(--accent); color: #fff; padding: 8px 16px; border-radius: 4px; font-family: var(--font-mono); font-size: 13px; width: 220px; outline: none; box-shadow: 0 0 10px rgba(0, 255, 200, 0.1);" />
             <input type="hidden" name="lang" value="${lang}" />
         </form>
 
@@ -84,11 +106,19 @@ export const Layout = (props: { title?: string; children?: any; activePath?: str
           if (dt) el.textContent = new Date(dt).toLocaleString();
         });
       }
+      
+      // Update on initial load
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', updateTimes);
       } else {
         updateTimes();
       }
+      
+      // Update on HTMX load (navigation)
+      document.addEventListener('htmx:load', function(evt) {
+        updateTimes();
+        window.scrollTo(0, 0); // Scroll to top on nav
+      });
     })();
   </script>
 </body>

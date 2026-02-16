@@ -31,8 +31,18 @@ app.get('/:identifier', async (c) => {
         const meta = activityRes.meta || { current_page: 1, last_page: 1, total: 0, per_page: 20 }
         const activities = Array.isArray(activityRes.activities) ? activityRes.activities : []
 
+        const initialBio = profile.bio ? profile.bio.replace(/<[^>]*>/g, '').slice(0, 160) : `Check out ${profile.display_name || profile.username}'s profile on 2020117 Network.`
+
         return c.html(
-            <Layout activePath="/" lang={lang} t={t} title={profile.display_name || profile.username || 'Profile'} >
+            <Layout
+                activePath="/"
+                lang={lang}
+                t={t}
+                title={profile.display_name || profile.username || 'Profile'}
+                description={initialBio}
+                image={profile.avatar_url || undefined}
+                type="profile"
+            >
                 <ProfilePage profile={profile} activities={activities} meta={meta} t={t} query={{ lang }} />
             </Layout>
         )

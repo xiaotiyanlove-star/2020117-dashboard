@@ -11,6 +11,19 @@ type Variables = {
 
 const app = new Hono<{ Variables: Variables }>()
 
+// Helper for SWR
+async function fetchMarket(api: string, params: string): Promise<MarketResponse> {
+  return await fetch(`${api}/dvm/market?${params}`).then(r => r.json().catch(() => ({}))) as MarketResponse
+}
+
+async function fetchAndCacheMarket(api: string, params: string, key: string, kv: any) {
+  const data = await fetchMarket(api, params)
+  if (data.jobs && data.jobs.length > 0) {
+    const wrapper = { ts: Date.now(), data }
+    await kv.put(key, JSON.stringify(wrapper))
+  }
+}
+
 app.get('/', async (c) => {
   const api = c.get('apiBase')
   const lang = c.req.query('lang') || 'en'
@@ -37,22 +50,45 @@ app.get('/', async (c) => {
     // @ts-ignore
     if (c.env.KV_CACHE) {
       // @ts-ignore
-      const cached = await c.env.KV_CACHE.get(cacheKey)
-      if (cached) {
-        marketResponse = JSON.parse(cached)
-        cacheStatus = 'HIT'
+      const cachedRaw = await c.env.KV_CACHE.get(cacheKey)
+      if (cachedRaw) {
+        try {
+          const cachedObj = JSON.parse(cachedRaw)
+          // Format { ts, data }
+          if (cachedObj.ts && cachedObj.data) {
+            marketResponse = cachedObj.data
+            const age = (Date.now() - cachedObj.ts) / 1000
+            if (age > 60) { // 1 min soft TTL
+              cacheStatus = 'STALE'
+              // Revalidate
+              // @ts-ignore
+              c.executionCtx.waitUntil(fetchAndCacheMarket(api, params.toString(), cacheKey, c.env.KV_CACHE))
+            } else {
+              cacheStatus = 'HIT'
+            }
+          } else {
+            // Migration
+            marketResponse = cachedObj
+            cacheStatus = 'STALE'
+            // @ts-ignore
+            c.executionCtx.waitUntil(fetchAndCacheMarket(api, params.toString(), cacheKey, c.env.KV_CACHE))
+          }
+        } catch (e) {
+          // Ignore
+        }
       }
     }
 
     if (!marketResponse) {
-      const res = await fetch(`${api}/dvm/market?${params.toString()}`).then(r => r.json().catch(() => ({}))) as MarketResponse
-      marketResponse = res
+      // Blocking Fetch
+      marketResponse = await fetchMarket(api, params.toString())
 
-      // Write Cache (TTL 1 min)
+      // Write Cache
       // @ts-ignore
-      if (c.env.KV_CACHE && res.jobs && res.jobs.length > 0) {
+      if (c.env.KV_CACHE && marketResponse.jobs?.length > 0) {
+        const wrapper = { ts: Date.now(), data: marketResponse }
         // @ts-ignore
-        c.executionCtx.waitUntil(c.env.KV_CACHE.put(cacheKey, JSON.stringify(res), { expirationTtl: 60 }))
+        c.executionCtx.waitUntil(c.env.KV_CACHE.put(cacheKey, JSON.stringify(wrapper)))
       }
     }
 
@@ -65,7 +101,13 @@ app.get('/', async (c) => {
     c.header('X-Cache-Status', cacheStatus)
 
     return c.html(
-      <Layout activePath="/market" title="Market" lang={lang} t={t}>
+      <Layout
+        activePath="/market"
+        title="Job Market"
+        description="Global decentralized marketplace for AI computing tasks. Post jobs, earn Sats, and view real-time market activity."
+        lang={lang}
+        t={t}
+      >
         <MarketPage data={data} filters={filters} t={t} query={{ lang }} />
       </Layout>
     )

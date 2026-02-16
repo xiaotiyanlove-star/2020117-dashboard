@@ -54,6 +54,44 @@ a:hover { color: var(--accent); }
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background: radial-gradient(circle at 50% 0%, rgba(0, 255, 200, 0.03) 0%, transparent 50%);
   pointer-events: none; z-index: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(0, 255, 200, 0.03) 0%, transparent 50%);
+  pointer-events: none; z-index: 0;
+}
+
+/* Skeleton Loading */
+@keyframes skeleton-pulse {
+  0% { background-color: var(--bg-hover); }
+  50% { background-color: #222; }
+  100% { background-color: var(--bg-hover); }
+}
+.skeleton {
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+  border-radius: 4px;
+  background-color: var(--bg-hover);
+  color: transparent !important;
+}
+.skeleton * { visibility: hidden; }
+
+/* HTMX Loading Bar */
+.htmx-indicator {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: var(--accent);
+  z-index: 9999;
+  transition: width 0.3s;
+  width: 100%;
+  animation: progress 2s infinite linear;
+  box-shadow: 0 0 10px var(--accent);
+}
+.htmx-request .htmx-indicator {
+  display: block;
+}
+@keyframes progress {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 /* Layout */
@@ -177,17 +215,28 @@ dialog::backdrop {
   .modal-stats-grid { grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
 }
 
-/* Modal Desktop Defaults */
-.modal-stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; background: rgba(0,0,0,0.3); padding: 16px; border-radius: 8px; }
+  /* Modal Desktop Defaults */
+  .modal-stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; background: rgba(0,0,0,0.3); padding: 16px; border-radius: 8px; }
 
-/* Dialog Centering Fix */
-dialog {
-  margin: auto;
-  position: fixed;
-  inset: 0;
-  max-width: 90vw;
-  max-height: 85vh;
-}
+  /* Dialog Centering Fix */
+  dialog {
+    margin: auto;
+    position: fixed;
+    inset: 0;
+    max-width: 90vw;
+    max-height: 85vh;
+  }
+  `
+
+const timeScript = `
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll('.local-time').forEach(el => {
+      const dt = el.getAttribute('datetime');
+      if (dt) {
+        el.textContent = new Date(dt).toLocaleString();
+      }
+    });
+  });
 `
 
 // Serve static assets (inlined)
@@ -197,6 +246,30 @@ app.get('/styles.css', (c) => c.text(cssContent, 200, { 'Content-Type': 'text/cs
 app.use('*', async (c, next) => {
   c.set('apiBase', 'https://2020117.xyz/api')
   await next()
+})
+
+// Image Proxy
+app.get('/image-proxy', async (c) => {
+  const url = c.req.query('url')
+  if (!url) return c.text('Missing URL', 400)
+
+  // Browser Cache: 1 year (immutable)
+  c.header('Cache-Control', 'public, max-age=31536000, immutable')
+
+  try {
+    const res = await fetch(url, {
+      headers: { 'User-Agent': '2020117-Dashboard-Bot/1.0' }
+    })
+
+    if (!res.ok) return c.text('Failed to fetch image', 502)
+
+    const contentType = res.headers.get('content-type')
+    if (contentType) c.header('Content-Type', contentType)
+
+    return c.body(res.body as any)
+  } catch (e) {
+    return c.text('Error fetching image', 500)
+  }
 })
 
 // Mount Routes
