@@ -172,16 +172,34 @@ dialog::backdrop {
 
 @media (max-width: 768px) {
   .container { padding: 16px; }
-  header { flex-direction: column; align-items: flex-start; gap: 16px; margin-bottom: 24px; }
-  nav { width: 100%; overflow-x: auto; padding-bottom: 8px; gap: 16px; -webkit-overflow-scrolling: touch; }
+  /* Header Mobile */
+  header { flex-direction: column; align-items: stretch; gap: 16px; margin-bottom: 24px; }
+  
+  /* Utils Container */
+  .header-controls { 
+    flex-direction: column; 
+    align-items: flex-start !important; 
+    gap: 12px !important; 
+    width: 100%;
+  }
+
+  /* Search Form */
+  .search-form { width: 100%; }
+  .search-form input { width: 100% !important; font-size: 16px; /* prevent zoom */ }
+
+  /* Lang & Status Row */
+  .header-controls > div:not(.search-form) {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* Navigation */
+  nav { width: 100%; overflow-x: auto; padding-bottom: 8px; gap: 16px; -webkit-overflow-scrolling: touch; border-bottom: 1px solid var(--border); }
   nav a { white-space: nowrap; font-size: 13px; padding: 4px 0; }
   
-  .stat-grid { grid-template-columns: 1fr; gap: 12px; margin-bottom: 24px; }
-  .stat-card { padding: 16px; display: flex; justify-content: space-between; align-items: center; }
-  .stat-value { font-size: 24px; margin-bottom: 0; }
-  .stat-label { margin-top: 0; font-size: 11px; }
-
-  /* Mobile Tables: Card View */
+  /* Mobile Tables */
   .table-container { border: none; background: transparent; overflow: visible; }
   table, thead, tbody, th, td, tr { display: block; }
   thead { display: none; }
@@ -208,8 +226,6 @@ dialog::backdrop {
   /* Dialogs */
   dialog { width: 95% !important; max-width: none !important; max-height: 85vh !important; }
 
-  /* Hide specific non-critical columns if needed, or handle via data-label */
-  
   /* Activity Feed Mobile */
   .activity-item { flex-direction: column; align-items: flex-start; gap: 8px; }
   .activity-time { font-size: 11px; color: var(--text-dim); margin-bottom: 4px; }

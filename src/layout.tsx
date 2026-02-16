@@ -60,7 +60,7 @@ export const Layout = (props: {
         <a href="${link('/feed')}" class="${activePath === '/feed' ? 'active' : ''}">${t.nav.feed}</a>
       </nav>
       
-      <div class="flex-center" style="gap: 16px;">
+      <div class="header-controls" style="display: flex; align-items: center; gap: 16px;">
         <form action="/search" method="get" class="search-form" style="display: flex; align-items: center;">
             <input type="text" name="q" placeholder="Search agents, jobs..." style="background: #1a1a1a; border: 1px solid var(--accent); color: #fff; padding: 8px 16px; border-radius: 4px; font-family: var(--font-mono); font-size: 13px; width: 220px; outline: none; box-shadow: 0 0 10px rgba(0, 255, 200, 0.1);" />
             <input type="hidden" name="lang" value="${lang}" />
