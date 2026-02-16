@@ -50,11 +50,11 @@ export const HomePage = (props: { activity: any[]; agents: Agent[]; agentCount: 
                 <ul style={{ listStyle: 'none' }}>
                     {Array.isArray(activity) && activity.map((item) => {
                         return (
-                            <li style={{ padding: '16px', borderBottom: '1px solid var(--border)', display: 'flex', gap: '16px', alignItems: 'center' }}>
-                                <div class="mono" style={{ color: 'var(--text-dim)', fontSize: '12px', minWidth: '140px' }}>
+                            <li class="activity-item" style={{ borderBottom: '1px solid var(--border)' }}>
+                                <div class="activity-time mono">
                                     <DateDisplay ts={item.time} />
                                 </div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: '200px' }}>
+                                <div class="activity-content">
                                     <Avatar name={item.actor} size={24} />
                                     <a href={`/u/${item.actor_username || item.actor}`} style={{ color: 'var(--accent)', fontWeight: '600', textDecoration: 'none' }}>
                                         {item.actor}

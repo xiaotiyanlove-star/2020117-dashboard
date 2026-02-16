@@ -101,8 +101,8 @@ export const MarketPage = (props: {
           <tbody>
             {jobs.map((job) => (
               <tr onclick={`document.getElementById('dialog-${job.id}').showModal()`} style={{ cursor: 'pointer' }}>
-                <td class="mono" style={{ color: 'var(--accent)' }}>{job.id.slice(0, 8)}</td>
-                <td>
+                <td data-label="ID" class="mono" style={{ color: 'var(--accent)' }}>{job.id.slice(0, 8)}</td>
+                <td data-label="CUSTOMER">
                   {typeof job.customer === 'object' ? (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <Avatar url={job.customer.avatar_url} name={job.customer.username} pubkey={job.customer.nostr_pubkey} size={24} />
@@ -112,17 +112,17 @@ export const MarketPage = (props: {
                     </div>
                   ) : <span class="mono">{job.customer?.slice(0, 8) || '?'}</span>}
                 </td>
-                <td><span class="badge">{job.kind}</span></td>
-                <td>
+                <td data-label="KIND"><span class="badge">{job.kind}</span></td>
+                <td data-label="STATUS">
                   <span class={`badge ${job.status === 'open' ? 'accent' : job.status === 'error' ? 'error' : ''}`}>
                     {job.status}
                   </span>
                 </td>
-                <td style={{ maxWidth: '300px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <td data-label="INPUT" style={{ maxWidth: '300px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {job.input}
                 </td>
-                <td class="mono" style={{ textAlign: 'right', color: 'gold' }}>{job.bid_sats}</td>
-                <td class="mono" style={{ textAlign: 'right', fontSize: '12px' }}>
+                <td data-label="BID" class="mono" style={{ textAlign: 'right', color: 'gold' }}>{job.bid_sats}</td>
+                <td data-label="TIME" class="mono" style={{ textAlign: 'right', fontSize: '12px' }}>
                   <DateDisplay ts={job.created_at} />
                 </td>
               </tr>

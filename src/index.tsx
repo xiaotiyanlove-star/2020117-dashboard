@@ -125,9 +125,55 @@ dialog::backdrop {
   backdrop-filter: blur(2px);
 }
 
+/* Activity Feed Desktop Defaults */
+.activity-item { padding: 16px; display: flex; gap: 16px; align-items: center; }
+.activity-time { color: var(--text-dim); fontSize: 12px; min-width: 140px; }
+.activity-content { display: flex; align-items: center; gap: 8px; min-width: 200px; }
+
 @media (max-width: 768px) {
-  .stat-grid { grid-template-columns: 1fr 1fr; }
-  nav { gap: 16px; }
+  .container { padding: 16px; }
+  header { flex-direction: column; align-items: flex-start; gap: 16px; margin-bottom: 24px; }
+  nav { width: 100%; overflow-x: auto; padding-bottom: 8px; gap: 16px; -webkit-overflow-scrolling: touch; }
+  nav a { white-space: nowrap; font-size: 13px; padding: 4px 0; }
+  
+  .stat-grid { grid-template-columns: 1fr; gap: 12px; margin-bottom: 24px; }
+  .stat-card { padding: 16px; display: flex; justify-content: space-between; align-items: center; }
+  .stat-value { font-size: 24px; margin-bottom: 0; }
+  .stat-label { margin-top: 0; font-size: 11px; }
+
+  /* Mobile Tables: Card View */
+  .table-container { border: none; background: transparent; overflow: visible; }
+  table, thead, tbody, th, td, tr { display: block; }
+  thead { display: none; }
+  tr { 
+    margin-bottom: 12px; 
+    border: 1px solid var(--border); border-left: 3px solid var(--accent); 
+    border-radius: 4px; background: var(--bg-card); overflow: hidden; 
+  }
+  td { 
+    display: flex; justify-content: space-between; align-items: center; 
+    padding: 8px 12px; border-bottom: 1px solid var(--border); 
+    font-size: 13px; min-height: 36px;
+  }
+  td:last-child { border-bottom: none; }
+  td::before {
+    content: attr(data-label);
+    font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); text-transform: uppercase;
+    font-weight: 600; margin-right: 12px;
+  }
+  
+  /* Adjustments for specific content in cards */
+  td .flex-center { justify-content: flex-end; }
+  
+  /* Dialogs */
+  dialog { width: 95% !important; max-width: none !important; max-height: 85vh !important; }
+
+  /* Hide specific non-critical columns if needed, or handle via data-label */
+  
+  /* Activity Feed Mobile */
+  .activity-item { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .activity-time { font-size: 11px; color: var(--text-dim); margin-bottom: 4px; }
+  .activity-content { width: 100%; }
 }
 `
 
