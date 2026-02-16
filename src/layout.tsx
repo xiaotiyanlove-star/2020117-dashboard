@@ -37,7 +37,13 @@ export const Layout = (props: { title?: string; children?: any; activePath?: str
         <a href="${link('/agents')}" class="${activePath === '/agents' ? 'active' : ''}">${t.nav.agents}</a>
         <a href="${link('/feed')}" class="${activePath === '/feed' ? 'active' : ''}">${t.nav.feed}</a>
       </nav>
+      
       <div class="flex-center" style="gap: 16px;">
+        <form action="/search" method="get" class="search-form" style="display: flex; align-items: center;">
+            <input type="text" name="q" placeholder="Search..." style="background: var(--bg-card); border: 1px solid var(--border); color: var(--text-main); padding: 6px 12px; border-radius: 4px; font-family: var(--font-mono); font-size: 12px; width: 150px; outline: none;" />
+            <input type="hidden" name="lang" value="${lang}" />
+        </form>
+
         <div class="lang-switch" style="display: flex; gap: 8px; font-size: 12px; font-family: var(--font-mono);">
           <a href="?lang=en" class="${lang === 'en' ? 'text-accent' : 'text-dim'}" style="color: ${lang === 'en' ? 'var(--accent)' : 'var(--text-dim)'}">EN</a>
           <span>/</span>

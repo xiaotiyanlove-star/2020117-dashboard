@@ -4,3 +4,8 @@ main = "src/index.tsx"
 
 [placement]
 mode = "smart"
+
+[[kv_namespaces]]
+binding = "KV_CACHE"
+id = "25300b11d5024dc685dc5ce1a188e5bc"
+preview_id = "25300b11d5024dc685dc5ce1a188e5bc_PREVIEW"

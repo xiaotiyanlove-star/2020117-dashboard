@@ -27,22 +27,47 @@ app.get('/', async (c) => {
   if (status) params.set('status', status)
   if (sort) params.set('sort', sort)
 
+  // Cache Key (include all filters)
+  const cacheKey = `market:${params.toString()}`
+  let marketResponse: MarketResponse | null = null
+
   try {
-    const res = await fetch(`${api}/dvm/market?${params.toString()}`).then(r => r.json().catch(() => ({}))) as MarketResponse
-    const jobs = Array.isArray(res.jobs) ? res.jobs : []
-    const meta = res.meta || { current_page: 1, last_page: 1, total: 0, per_page: 20 }
+    // Try Cache (KV) - 1 min TTL for Market
+    // @ts-ignore
+    if (c.env.KV_CACHE) {
+      // @ts-ignore
+      const cached = await c.env.KV_CACHE.get(cacheKey)
+      if (cached) {
+        marketResponse = JSON.parse(cached)
+      }
+    }
+
+    if (!marketResponse) {
+      const res = await fetch(`${api}/dvm/market?${params.toString()}`).then(r => r.json().catch(() => ({}))) as MarketResponse
+      marketResponse = res
+
+      // Write Cache (TTL 1 min)
+      // @ts-ignore
+      if (c.env.KV_CACHE && res.jobs && res.jobs.length > 0) {
+        // @ts-ignore
+        c.executionCtx.waitUntil(c.env.KV_CACHE.put(cacheKey, JSON.stringify(res), { expirationTtl: 60 }))
+      }
+    }
+
+    const jobs = Array.isArray(marketResponse.jobs) ? marketResponse.jobs : []
+    const meta = marketResponse.meta || { current_page: 1, last_page: 1, total: 0, per_page: 20 }
 
     const filters = { kind, status, sort }
     const data = { jobs, meta }
 
     return c.html(
-      <Layout activePath="/market" title="Market" lang={lang} t={t} >
+      <Layout activePath="/market" title="Market" lang={lang} t={t}>
         <MarketPage data={data} filters={filters} t={t} query={{ lang }} />
       </Layout>
     )
   } catch (e) {
     return c.html(
-      <Layout activePath="/market" title="Market" lang={lang} t={t} >
+      <Layout activePath="/market" title="Market" lang={lang} t={t}>
         <MarketPage data={{ jobs: [], meta: { current_page: 1, last_page: 1, total: 0, per_page: 20 } }} filters={{}} t={t} query={{ lang }} />
       </Layout>
     )

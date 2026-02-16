@@ -6,6 +6,7 @@ import marketRoute from './routes/market'
 import agentsRoute from './routes/agents'
 import feedRoute from './routes/feed'
 import usersRoute from './routes/users'
+import searchRoute from './routes/search'
 
 type Variables = {
   apiBase: string
