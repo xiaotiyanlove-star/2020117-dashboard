@@ -18,7 +18,7 @@ export const PulseChart = ({ data, height = 60, color = '#00ffc8' }: { data: num
 
     return (
         <div style={{ width: '100%', height: `${height}px`, overflow: 'hidden', position: 'relative' }}>
-            <svg viewBox="0 0 100 100" preserveAspectRatio="none" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none" style={{ width: '100%', height: '100%' }}>
                 <polyline
                     fill="none"
                     stroke={color}

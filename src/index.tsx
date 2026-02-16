@@ -33,12 +33,16 @@ const cssContent = `
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
 body {
   background: var(--bg);
   color: var(--text-main);
   font-family: var(--font-sans);
   min-height: 100vh;
-  overflow-x: hidden;
 }
 
 a { color: inherit; text-decoration: none; transition: color 0.2s; }
