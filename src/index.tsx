@@ -187,11 +187,11 @@ dialog::backdrop {
   .search-form { width: 100%; }
   .search-form input { width: 100% !important; font-size: 16px; /* prevent zoom */ }
 
-  /* Lang & Status Row */
-  .header-controls > div:not(.search-form) {
+  /* Header Tools (Lang & Status) */
+  .header-tools {
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Lang left, Status right */
     align-items: center;
   }
   

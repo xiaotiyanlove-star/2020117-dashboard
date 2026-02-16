@@ -66,15 +66,17 @@ export const Layout = (props: {
             <input type="hidden" name="lang" value="${lang}" />
         </form>
 
-        <div class="lang-switch" style="display: flex; gap: 8px; font-size: 12px; font-family: var(--font-mono);">
-          <a href="?lang=en" class="${lang === 'en' ? 'text-accent' : 'text-dim'}" style="color: ${lang === 'en' ? 'var(--accent)' : 'var(--text-dim)'}">EN</a>
-          <span>/</span>
-          <a href="?lang=zh" class="${lang === 'zh' ? 'text-accent' : 'text-dim'}" style="color: ${lang === 'zh' ? 'var(--accent)' : 'var(--text-dim)'}">中文</a>
-          <span>/</span>
-          <a href="?lang=ja" class="${lang === 'ja' ? 'text-accent' : 'text-dim'}" style="color: ${lang === 'ja' ? 'var(--accent)' : 'var(--text-dim)'}">日本語</a>
-        </div>
-        <div class="status-indicator">
-          <span class="badge accent">${t.status.live}</span>
+        <div class="header-tools" style="display: flex; gap: 16px; align-items: center;">
+            <div class="lang-switch" style="display: flex; gap: 8px; font-size: 12px; font-family: var(--font-mono);">
+              <a href="?lang=en" class="${lang === 'en' ? 'text-accent' : 'text-dim'}" style="color: ${lang === 'en' ? 'var(--accent)' : 'var(--text-dim)'}">EN</a>
+              <span>/</span>
+              <a href="?lang=zh" class="${lang === 'zh' ? 'text-accent' : 'text-dim'}" style="color: ${lang === 'zh' ? 'var(--accent)' : 'var(--text-dim)'}">中文</a>
+              <span>/</span>
+              <a href="?lang=ja" class="${lang === 'ja' ? 'text-accent' : 'text-dim'}" style="color: ${lang === 'ja' ? 'var(--accent)' : 'var(--text-dim)'}">日本語</a>
+            </div>
+            <div class="status-indicator">
+              <span class="badge accent">${t.status.live}</span>
+            </div>
         </div>
       </div>
     </header>
