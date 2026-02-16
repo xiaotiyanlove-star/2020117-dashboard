@@ -49,6 +49,7 @@ export const AgentsPage = (props: { agents: Agent[]; meta: PaginationMeta; t: Lo
                             <div style={{ height: '1px', background: 'var(--border)', margin: '0 -20px' }}></div>
 
                             {/* Stats Grid */}
+                            {/* Stats Grid */}
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                                 <div>
                                     <div style={{ fontSize: '10px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>Completed</div>
@@ -59,12 +60,20 @@ export const AgentsPage = (props: { agents: Agent[]; meta: PaginationMeta; t: Lo
                                     <div class="mono" style={{ fontSize: '14px' }}>{agent.avg_response_time_s ? `${agent.avg_response_time_s}s` : '-'}</div>
                                 </div>
                                 <div>
-                                    <div style={{ fontSize: '10px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>Last Seen</div>
-                                    <div class="mono" style={{ fontSize: '12px', whiteSpace: 'nowrap' }}>{agent.last_seen_at ? <DateDisplay ts={agent.last_seen_at * 1000} /> : '-'}</div>
+                                    <div style={{ fontSize: '10px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>Earned</div>
+                                    <div class="mono" style={{ fontSize: '14px', color: 'var(--accent)' }}>{agent.earned_sats ? `${agent.earned_sats} sats` : '0'}</div>
                                 </div>
                                 <div>
                                     <div style={{ fontSize: '10px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>Zaps</div>
-                                    <div class="mono" style={{ fontSize: '14px' }}>{agent.total_zap_received_sats ? agent.total_zap_received_sats : '0'}</div>
+                                    <div class="mono" style={{ fontSize: '14px' }}>{agent.total_zap_received_sats ? `${agent.total_zap_received_sats} sats` : '0'}</div>
+                                </div>
+                                <div>
+                                    <div style={{ fontSize: '10px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>Reputation</div>
+                                    <div class="mono" style={{ fontSize: '14px', color: 'var(--accent)' }}>{(agent.earned_sats || 0) + (agent.total_zap_received_sats || 0)}</div>
+                                </div>
+                                <div>
+                                    <div style={{ fontSize: '10px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>Last Seen</div>
+                                    <div class="mono" style={{ fontSize: '12px', whiteSpace: 'nowrap' }}>{agent.last_seen_at ? <DateDisplay ts={agent.last_seen_at * 1000} /> : '-'}</div>
                                 </div>
                             </div>
                         </div>
@@ -111,8 +120,16 @@ export const AgentsPage = (props: { agents: Agent[]; meta: PaginationMeta; t: Lo
                                         <div class="mono" style={{ fontSize: '18px', fontWeight: 'bold' }}>{agent.avg_response_time_s ? `${agent.avg_response_time_s}s` : '-'}</div>
                                     </div>
                                     <div style={{ textAlign: 'center' }}>
+                                        <div style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>Earned</div>
+                                        <div class="mono" style={{ fontSize: '18px', fontWeight: 'bold', color: 'var(--accent)' }}>{agent.earned_sats ? `${agent.earned_sats} sats` : '0'}</div>
+                                    </div>
+                                    <div style={{ textAlign: 'center' }}>
                                         <div style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>Zaps</div>
                                         <div class="mono" style={{ fontSize: '18px', fontWeight: 'bold' }}>{agent.total_zap_received_sats || '0'}</div>
+                                    </div>
+                                    <div style={{ textAlign: 'center' }}>
+                                        <div style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>Reputation</div>
+                                        <div class="mono" style={{ fontSize: '18px', fontWeight: 'bold', color: 'var(--accent)' }}>{(agent.earned_sats || 0) + (agent.total_zap_received_sats || 0)}</div>
                                     </div>
                                     <div style={{ textAlign: 'center' }}>
                                         <div style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>Last Seen</div>

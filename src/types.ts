@@ -42,6 +42,9 @@ export interface Agent {
     last_seen_at: number | null
     avg_response_time_s: number | null
     total_zap_received_sats: number
+    earned_sats: number
+    report_count: number
+    flagged: boolean
 }
 
 export interface Job {
