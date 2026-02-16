@@ -1,14 +1,11 @@
 
 import { Hono } from 'hono'
-import { Layout } from './layout'
-import { HomePage } from './pages/home'
-import { MarketPage } from './pages/market'
-import { AgentsPage } from './pages/agents'
-import { FeedPage } from './pages/feed'
-import { TopicPage } from './pages/topic'
-import { ProfilePage } from './pages/profile'
 import { getLocale } from './locales'
-import type { UserProfile } from './types'
+import homeRoute from './routes/home'
+import marketRoute from './routes/market'
+import agentsRoute from './routes/agents'
+import feedRoute from './routes/feed'
+import usersRoute from './routes/users'
 
 type Variables = {
   apiBase: string
@@ -201,164 +198,11 @@ app.use('*', async (c, next) => {
   await next()
 })
 
-// Routes
-app.get('/', async (c) => {
-  const api = c.get('apiBase')
-  const lang = c.req.query('lang') || 'en'
-  const t = getLocale(lang)
-
-  try {
-    const [activityData, agentsData, marketData] = await Promise.all([
-      fetch(`${api}/activity`).then(r => r.json().catch(() => [])),
-      fetch(`${api}/agents`).then(r => r.json().catch(() => ({}))),
-      fetch(`${api}/dvm/market`).then(r => r.json().catch(() => ({})))
-    ])
-
-    const activity = Array.isArray(activityData) ? activityData : []
-    const agentsObj = agentsData as any || {}
-    const agentCount = agentsObj.meta?.total || (Array.isArray(agentsObj.agents) ? agentsObj.agents.length : 0)
-    const market = marketData as any || {}
-    const marketCount = market.meta?.total || (Array.isArray(market.jobs) ? market.jobs.length : 0)
-
-    return c.html(<Layout activePath="/" lang={lang} t={t}><HomePage activity={activity} agents={Array.isArray(agentsObj.agents) ? agentsObj.agents : []} agentCount={agentCount} marketCount={marketCount} t={t} /></Layout>)
-  } catch (e: any) {
-    return c.html(<Layout activePath="/" lang={lang} t={t}><div>Error loading data: {e.message}</div></Layout>)
-  }
-})
-
-app.get('/market', async (c) => {
-  const api = c.get('apiBase')
-  const lang = c.req.query('lang') || 'en'
-  const page = c.req.query('page') || '1'
-  const kind = c.req.query('kind')
-  const status = c.req.query('status') || 'all'
-  const sort = c.req.query('sort')
-  const t = getLocale(lang)
-
-  // Build query string
-  const params = new URLSearchParams()
-  params.set('page', page)
-  if (kind) params.set('kind', kind)
-  if (status) params.set('status', status)
-  if (sort) params.set('sort', sort)
-
-  try {
-    const res = await fetch(`${api}/dvm/market?${params.toString()}`).then(r => r.json().catch(() => ({}))) as any
-    const jobs = Array.isArray(res.jobs) ? res.jobs : []
-    const meta = res.meta || { current_page: 1, last_page: 1, total: 0, per_page: 20 }
-
-    const filters = { kind, status, sort }
-    const data = { jobs, meta }
-
-    return c.html(<Layout activePath="/market" title="Market" lang={lang} t={t}><MarketPage data={data} filters={filters} t={t} query={{ lang }} /></Layout>)
-  } catch (e) {
-    return c.html(<Layout activePath="/market" title="Market" lang={lang} t={t}><MarketPage data={{ jobs: [], meta: { current_page: 1, last_page: 1, total: 0, per_page: 20 } }} filters={{}} t={t} query={{ lang }} /></Layout>)
-  }
-})
-
-app.get('/agents', async (c) => {
-  const api = c.get('apiBase')
-  const lang = c.req.query('lang') || 'en'
-  const page = c.req.query('page') || '1'
-  const t = getLocale(lang)
-
-  try {
-    const res = await fetch(`${api}/agents?page=${page}`).then(r => r.json().catch(() => ({}))) as any
-    const agents = Array.isArray(res.agents) ? res.agents : []
-    const meta = res.meta || { current_page: 1, last_page: 1, total: 0, per_page: 20 }
-
-    return c.html(<Layout activePath="/agents" title="Agents" lang={lang} t={t}><AgentsPage agents={agents} meta={meta} t={t} query={{ lang }} /></Layout>)
-  } catch (e) {
-    return c.html(<Layout activePath="/agents" title="Agents" lang={lang} t={t}><AgentsPage agents={[]} meta={{ current_page: 1, last_page: 1, total: 0, per_page: 20 }} t={t} /></Layout>)
-  }
-})
-
-app.get('/feed/:id', async (c) => {
-  const api = c.get('apiBase')
-  const id = c.req.param('id')
-  const lang = c.req.query('lang') || 'en'
-  const page = c.req.query('page') || '1'
-  const t = getLocale(lang)
-
-  try {
-    const res = await fetch(`${api}/topics/${id}?page=${page}`)
-    const data = await res.json() as { topic: any; comments: any[]; comment_meta: any }
-
-    // Check if topic exists
-    if (!data.topic) {
-      throw new Error('Topic not found or access denied')
-    }
-
-    const meta = data.comment_meta || { current_page: 1, last_page: 1, total: 0, per_page: 20 }
-
-    return c.html(
-      <Layout activePath="/feed" lang={lang} t={t} title={data.topic?.title || 'Topic'}>
-        <TopicPage topic={data.topic} comments={data.comments || []} meta={meta} t={t} query={{ lang }} />
-      </Layout>
-    )
-  } catch (e) {
-    return c.html(
-      <Layout activePath="/feed" lang={lang} t={t} title="Error">
-        <div class="error">Failed to load topic. (Private content?)</div>
-      </Layout>
-    )
-  }
-})
-
-app.get('/u/:identifier', async (c) => {
-  const api = c.get('apiBase')
-  const identifier = c.req.param('identifier')
-  const lang = c.req.query('lang') || 'en'
-  const page = c.req.query('page') || '1'
-  const t = getLocale(lang)
-
-  try {
-    const [profile, activityRes] = await Promise.all([
-      fetch(`${api}/users/${identifier}`).then(r => {
-        if (!r.ok) throw new Error('User not found')
-        return r.json()
-      }) as Promise<UserProfile>,
-      fetch(`${api}/users/${identifier}/activity?page=${page}`).then(r => r.json().catch(() => ({}))) as Promise<any>
-    ])
-
-    const meta = activityRes.meta || { current_page: 1, last_page: 1, total: 0, per_page: 20 }
-    const activities = Array.isArray(activityRes.activities) ? activityRes.activities : []
-
-    return c.html(
-      <Layout activePath="/" lang={lang} t={t} title={profile.display_name || profile.username || 'Profile'}>
-        <ProfilePage profile={profile} activities={activities} meta={meta} t={t} query={{ lang }} />
-      </Layout>
-    )
-  } catch (e) {
-    return c.html(
-      <Layout activePath="/" lang={lang} t={t} title="Error">
-        <div class="error">User not found.</div>
-      </Layout>
-    )
-  }
-})
-
-app.get('/feed', async (c) => {
-  const api = c.get('apiBase')
-  const lang = c.req.query('lang') || 'en'
-  const page = c.req.query('page') || '1'
-  const keyword = c.req.query('keyword')
-  const t = getLocale(lang)
-
-  // Build query string
-  const params = new URLSearchParams()
-  params.set('page', page)
-  if (keyword) params.set('keyword', keyword)
-
-  try {
-    const res = await fetch(`${api}/timeline?${params.toString()}`).then(r => r.json().catch(() => ({}))) as any
-    const topics = Array.isArray(res.topics) ? res.topics : []
-    const meta = res.meta || { current_page: 1, last_page: 1, total: 0, per_page: 20 }
-
-    return c.html(<Layout activePath="/feed" title="Live Feed" lang={lang} t={t}><FeedPage topics={topics} meta={meta} t={t} query={{ lang, keyword }} /></Layout>)
-  } catch (e) {
-    return c.html(<Layout activePath="/feed" title="Live Feed" lang={lang} t={t}><FeedPage topics={[]} meta={{ current_page: 1, last_page: 1, total: 0, per_page: 20 }} t={t} query={{ lang }} /></Layout>)
-  }
-})
+// Mount Routes
+app.route('/', homeRoute)
+app.route('/market', marketRoute)
+app.route('/agents', agentsRoute)
+app.route('/feed', feedRoute)
+app.route('/u', usersRoute)
 
 export default app
