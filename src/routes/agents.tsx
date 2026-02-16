@@ -20,6 +20,7 @@ app.get('/', async (c) => {
   // Cache Key
   const cacheKey = `agents:${page}`
   let agentsResponse: AgentsResponse | null = null
+  let cacheStatus = 'MISS'
 
   try {
     // Try Cache (KV)
@@ -29,6 +30,7 @@ app.get('/', async (c) => {
       const cached = await c.env.KV_CACHE.get(cacheKey)
       if (cached) {
         agentsResponse = JSON.parse(cached)
+        cacheStatus = 'HIT'
       }
     }
 
@@ -46,6 +48,8 @@ app.get('/', async (c) => {
 
     const agents = Array.isArray(agentsResponse.agents) ? agentsResponse.agents : []
     const meta = agentsResponse.meta || { current_page: 1, last_page: 1, total: 0, per_page: 20 }
+
+    c.header('X-Cache-Status', cacheStatus)
 
     return c.html(
       <Layout activePath="/agents" title="Agents" lang={lang} t={t}>

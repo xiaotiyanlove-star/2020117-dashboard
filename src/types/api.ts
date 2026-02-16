@@ -36,3 +36,10 @@ export interface ActivityItem {
     time: number
     [key: string]: any
 }
+
+export interface StatsResponse {
+    total_volume_sats: number
+    total_jobs_completed: number
+    total_zaps_sats: number
+    active_users_24h: number
+}

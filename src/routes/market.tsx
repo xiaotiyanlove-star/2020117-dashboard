@@ -30,6 +30,7 @@ app.get('/', async (c) => {
   // Cache Key (include all filters)
   const cacheKey = `market:${params.toString()}`
   let marketResponse: MarketResponse | null = null
+  let cacheStatus = 'MISS'
 
   try {
     // Try Cache (KV) - 1 min TTL for Market
@@ -39,6 +40,7 @@ app.get('/', async (c) => {
       const cached = await c.env.KV_CACHE.get(cacheKey)
       if (cached) {
         marketResponse = JSON.parse(cached)
+        cacheStatus = 'HIT'
       }
     }
 
@@ -59,6 +61,8 @@ app.get('/', async (c) => {
 
     const filters = { kind, status, sort }
     const data = { jobs, meta }
+
+    c.header('X-Cache-Status', cacheStatus)
 
     return c.html(
       <Layout activePath="/market" title="Market" lang={lang} t={t}>

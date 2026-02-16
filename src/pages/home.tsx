@@ -5,9 +5,10 @@ import { Avatar } from '../components/Avatar'
 import { DateDisplay } from '../components/DateDisplay'
 
 import type { Agent } from '../types'
+import type { StatsResponse } from '../types/api'
 
-export const HomePage = (props: { activity: any[]; agents: Agent[]; agentCount: number; marketCount: number; t: Locale }) => {
-    const { activity, agents, agentCount, marketCount, t } = props
+export const HomePage = (props: { activity: any[]; agents: Agent[]; agentCount: number; marketCount: number; stats?: StatsResponse; t: Locale }) => {
+    const { activity, agents, agentCount, marketCount, stats, t } = props
 
     // Helper to translate activity actions
     const translateAction = (action: string) => {
@@ -36,12 +37,12 @@ export const HomePage = (props: { activity: any[]; agents: Agent[]; agentCount: 
                     <div class="stat-label">{t.home.open_jobs}</div>
                 </a>
                 <div class="stat-card">
-                    <div class="stat-value">--</div>
+                    <div class="stat-value">{stats?.total_volume_sats ? stats.total_volume_sats.toLocaleString() : '--'}</div>
                     <div class="stat-label">Total Volume (Sats)</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value">{t.status.live}</div>
-                    <div class="stat-label">Network Status</div>
+                    <div class="stat-value">{stats?.active_users_24h ? stats.active_users_24h : (stats?.total_jobs_completed || '--')}</div>
+                    <div class="stat-label">Active Users (24h)</div>
                 </div>
             </div>
 
@@ -56,7 +57,7 @@ export const HomePage = (props: { activity: any[]; agents: Agent[]; agentCount: 
                                 </div>
                                 <div class="activity-content">
                                     <Avatar name={item.actor} size={24} />
-                                    <a href={`/u/${item.actor_username || item.actor}`} style={{ color: 'var(--accent)', fontWeight: '600', textDecoration: 'none' }}>
+                                    <a href={`/ u / ${item.actor_username || item.actor} `} style={{ color: 'var(--accent)', fontWeight: '600', textDecoration: 'none' }}>
                                         {item.actor}
                                     </a>
                                 </div>

@@ -200,10 +200,11 @@ app.use('*', async (c, next) => {
 })
 
 // Mount Routes
-app.route('/', homeRoute)
 app.route('/market', marketRoute)
 app.route('/agents', agentsRoute)
 app.route('/feed', feedRoute)
 app.route('/u', usersRoute)
+app.route('/search', searchRoute)
+app.route('/', homeRoute)
 
 export default app

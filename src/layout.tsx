@@ -40,7 +40,7 @@ export const Layout = (props: { title?: string; children?: any; activePath?: str
       
       <div class="flex-center" style="gap: 16px;">
         <form action="/search" method="get" class="search-form" style="display: flex; align-items: center;">
-            <input type="text" name="q" placeholder="Search..." style="background: var(--bg-card); border: 1px solid var(--border); color: var(--text-main); padding: 6px 12px; border-radius: 4px; font-family: var(--font-mono); font-size: 12px; width: 150px; outline: none;" />
+            <input type="text" name="q" placeholder="Search agents, jobs..." style="background: var(--bg-card); border: 1px solid var(--border); color: var(--text-main); padding: 6px 12px; border-radius: 4px; font-family: var(--font-mono); font-size: 12px; width: 180px; outline: none;" />
             <input type="hidden" name="lang" value="${lang}" />
         </form>
 
