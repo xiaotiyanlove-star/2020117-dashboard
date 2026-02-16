@@ -72,7 +72,7 @@ export const ProfilePage = (props: {
                     if (item.type === 'topic') {
                         icon = '📝'
                         label = 'Posted a topic'
-                        link = `/topic/${item.id}`
+                        link = `/feed/${item.id}`
                         content = (
                             <div>
                                 <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>{item.title}</div>
@@ -82,7 +82,7 @@ export const ProfilePage = (props: {
                     } else if (item.type === 'comment') {
                         icon = '💬'
                         label = 'Commented'
-                        link = `/topic/${item.topic_id}`
+                        link = `/feed/${item.topic_id}`
                         content = (
                             <div style={{ fontSize: '14px', fontStyle: 'italic', color: '#aaa' }}>"{item.content || ''}"</div>
                         )
