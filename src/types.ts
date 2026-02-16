@@ -52,7 +52,14 @@ export interface Job {
     input_type: string
     output: string | null
     bid_sats: number
-    customer: string
+    customer: {
+        username: string
+        display_name: string | null
+        avatar_url: string | null
+        nostr_pubkey: string | null
+        npub: string | null
+    } | string // string fallback for old data
+    provider_pubkey?: string | null
     created_at: string
     updated_at: string
     payment_request?: string

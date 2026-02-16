@@ -3,6 +3,7 @@ import { jsx } from 'hono/jsx'
 import type { Locale } from '../locales'
 import { Pagination } from '../components/Pagination'
 import { DateDisplay } from '../components/DateDisplay'
+import { Avatar } from '../components/Avatar'
 import type { Job, PaginationMeta } from '../types'
 
 export const MarketPage = (props: {
@@ -70,7 +71,7 @@ export const MarketPage = (props: {
             onchange="this.form.submit()"
             style={{ background: 'var(--bg-card)', color: 'var(--text-main)', border: '1px solid var(--border)', padding: '6px', borderRadius: '4px' }}
           >
-            <option value="" selected={!filters.status}>Status: All</option>
+            <option value="all" selected={filters.status === 'all' || !filters.status}>Status: All</option>
             {statuses.map(s => <option value={s} selected={filters.status === s}>{s.toUpperCase()}</option>)}
           </select>
 
@@ -89,6 +90,7 @@ export const MarketPage = (props: {
           <thead>
             <tr>
               <th style={{ width: '80px' }}>ID</th>
+              <th>CUSTOMER</th>
               <th>{t.market.table.kind}</th>
               <th style={{ width: '80px' }}>{t.market.table.status}</th>
               <th>{t.market.table.input}</th>
@@ -100,6 +102,16 @@ export const MarketPage = (props: {
             {jobs.map((job) => (
               <tr onclick={`document.getElementById('dialog-${job.id}').showModal()`} style={{ cursor: 'pointer' }}>
                 <td class="mono" style={{ color: 'var(--accent)' }}>{job.id.slice(0, 8)}</td>
+                <td>
+                  {typeof job.customer === 'object' ? (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Avatar url={job.customer.avatar_url} name={job.customer.username} pubkey={job.customer.nostr_pubkey} size={24} />
+                      <a href={`/u/${job.customer.username || job.customer.nostr_pubkey}`} style={{ textDecoration: 'none', color: 'var(--text-main)', fontWeight: '500' }}>
+                        {job.customer.display_name || job.customer.username || 'Unknown'}
+                      </a>
+                    </div>
+                  ) : <span class="mono">{job.customer?.slice(0, 8) || '?'}</span>}
+                </td>
                 <td><span class="badge">{job.kind}</span></td>
                 <td>
                   <span class={`badge ${job.status === 'open' ? 'accent' : job.status === 'error' ? 'error' : ''}`}>
@@ -145,6 +157,30 @@ export const MarketPage = (props: {
                 {job.input_type || 'text'}
               </div>
             </div>
+
+            {typeof job.customer === 'object' && (
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '24px', padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px' }}>
+                <Avatar url={job.customer.avatar_url} name={job.customer.username} pubkey={job.customer.nostr_pubkey} size={40} />
+                <div>
+                  <div style={{ fontSize: '10px', color: '#666', marginBottom: '2px' }}>REQUESTER</div>
+                  <a href={`/u/${job.customer.username || job.customer.nostr_pubkey}`} style={{ fontWeight: 'bold', color: 'var(--text-main)', textDecoration: 'none' }}>
+                    {job.customer.display_name || job.customer.username}
+                  </a>
+                </div>
+                {job.provider_pubkey && (
+                  <>
+                    <div style={{ fontSize: '20px', color: '#444' }}>→</div>
+                    <div>
+                      <div style={{ fontSize: '10px', color: '#666', marginBottom: '2px' }}>PROVIDER</div>
+                      <a href={`/u/${job.provider_pubkey}`} class="mono" style={{ color: 'var(--accent)', textDecoration: 'none' }}>
+                        {job.provider_pubkey.slice(0, 8)}...
+                      </a>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+
             <div style={{ marginBottom: '24px' }}>
               <div class="mono" style={{ fontSize: '12px', color: 'var(--text-dim)', marginBottom: '8px' }}>INPUT</div>
               <div style={{ background: '#000', padding: '12px', borderRadius: '4px', whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}>

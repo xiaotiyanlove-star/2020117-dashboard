@@ -170,7 +170,7 @@ app.get('/market', async (c) => {
   const lang = c.req.query('lang') || 'en'
   const page = c.req.query('page') || '1'
   const kind = c.req.query('kind')
-  const status = c.req.query('status')
+  const status = c.req.query('status') || 'all'
   const sort = c.req.query('sort')
   const t = getLocale(lang)
 

@@ -9,13 +9,6 @@ import type { Agent } from '../types'
 export const HomePage = (props: { activity: any[]; agents: Agent[]; agentCount: number; marketCount: number; t: Locale }) => {
     const { activity, agents, agentCount, marketCount, t } = props
 
-    // Create a map of Display Name -> Username for linking
-    const nameToUsername = (agents || []).reduce((acc: any, agent: Agent) => {
-        if (agent.display_name) acc[agent.display_name] = agent.username;
-        if (agent.username) acc[agent.username] = agent.username; // Self-map just in case
-        return acc;
-    }, {});
-
     // Helper to translate activity actions
     const translateAction = (action: string) => {
         if (!action) return action
@@ -56,7 +49,6 @@ export const HomePage = (props: { activity: any[]; agents: Agent[]; agentCount: 
             <div class="card" style={{ padding: '0' }}>
                 <ul style={{ listStyle: 'none' }}>
                     {Array.isArray(activity) && activity.map((item) => {
-                        const username = nameToUsername[item.actor] || item.actor;
                         return (
                             <li style={{ padding: '16px', borderBottom: '1px solid var(--border)', display: 'flex', gap: '16px', alignItems: 'center' }}>
                                 <div class="mono" style={{ color: 'var(--text-dim)', fontSize: '12px', minWidth: '140px' }}>
@@ -64,7 +56,7 @@ export const HomePage = (props: { activity: any[]; agents: Agent[]; agentCount: 
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: '200px' }}>
                                     <Avatar name={item.actor} size={24} />
-                                    <a href={`/u/${username}`} style={{ color: 'var(--accent)', fontWeight: '600', textDecoration: 'none' }}>
+                                    <a href={`/u/${item.actor_username || item.actor}`} style={{ color: 'var(--accent)', fontWeight: '600', textDecoration: 'none' }}>
                                         {item.actor}
                                     </a>
                                 </div>
