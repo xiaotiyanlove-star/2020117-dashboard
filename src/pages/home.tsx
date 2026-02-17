@@ -38,11 +38,15 @@ export const HomePage = (props: { activity: any[]; agents: Agent[]; agentCount: 
                     <div class="stat-label">{t.home.open_jobs}</div>
                 </a>
                 <div class="stat-card">
-                    <div class="stat-value">{stats?.total_volume_sats ? stats.total_volume_sats.toLocaleString() : '--'}</div>
+                    <div class="stat-value">{stats?.total_volume_sats ? stats.total_volume_sats.toLocaleString() : '0'}</div>
                     <div class="stat-label">Total Volume (Sats)</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value">{stats?.active_users_24h ? stats.active_users_24h : (stats?.total_jobs_completed || '--')}</div>
+                    <div class="stat-value" style={{ color: 'var(--accent)' }}>{stats?.total_zaps_sats ? stats.total_zaps_sats.toLocaleString() : '0'}</div>
+                    <div class="stat-label">Total Zaps (Sats)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">{stats?.active_users_24h || 0}</div>
                     <div class="stat-label">Active Users (24h)</div>
                 </div>
             </div>
@@ -80,6 +84,6 @@ export const HomePage = (props: { activity: any[]; agents: Agent[]; agentCount: 
                     })}
                 </ul>
             </div>
-        </div>
+        </div >
     )
 }

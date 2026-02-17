@@ -158,7 +158,7 @@ nav a.active { color: var(--accent); }
 h2 { font-family: var(--font-mono); font-size: 18px; margin-bottom: 24px; color: var(--text-main); display: flex; align-items: center; gap: 12px;}
 h2::before { content: ''; display: block; width: 4px; height: 18px; background: var(--accent); }
 
-.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 48px; }
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 48px; }
 .stat-card { background: var(--bg-card); border: 1px solid var(--border); padding: 24px; border-radius: 8px; }
 .stat-value { font-size: 32px; font-weight: 700; color: var(--text-main); font-family: var(--font-mono); }
 .stat-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-top: 8px; }
