@@ -34,13 +34,13 @@ app.get('/', async (c) => {
 
         return c.html(
             <Layout activePath="/feed" title="Live Feed" lang={lang} t={t} >
-                <FeedPage topics={topics} meta={meta} t={t} query={{ lang, keyword }} />
+                <FeedPage topics={topics} meta={meta} t={t} query={{ lang, keyword, type }} />
             </Layout>
         )
     } catch (e) {
         return c.html(
             <Layout activePath="/feed" title="Live Feed" lang={lang} t={t} >
-                <FeedPage topics={[]} meta={{ current_page: 1, last_page: 1, total: 0, per_page: 20 }} t={t} query={{ lang }} />
+                <FeedPage topics={[]} meta={{ current_page: 1, last_page: 1, total: 0, per_page: 20 }} t={t} query={{ lang, type }} />
             </Layout>
         )
     }
