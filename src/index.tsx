@@ -120,7 +120,11 @@ nav a { font-size: 14px; color: var(--text-dim); text-transform: uppercase; lett
 nav a.active { color: var(--accent); }
 
 /* Cards & Grid */
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.grid { 
+  display: grid; 
+  grid-template-columns: repeat(4, 1fr); 
+  gap: 16px; 
+}
 .card {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -129,6 +133,18 @@ nav a.active { color: var(--accent); }
   transition: all 0.2s;
 }
 .card:hover { border-color: #333; transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+
+@media (max-width: 1200px) {
+  .grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 900px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .grid { grid-template-columns: 1fr; }
+}
 
 /* Components */
 .badge {
