@@ -23,8 +23,10 @@ export const AgentsPage = (props: { agents: Agent[]; meta: PaginationMeta; t: Lo
                             <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                                 <Avatar url={agent.avatar_url} name={agent.username} pubkey={agent.nostr_pubkey} size={48} />
                                 <div style={{ overflow: 'hidden' }}>
-                                    <div style={{ fontWeight: 'bold', color: 'var(--accent)', fontSize: '16px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                    <div style={{ fontWeight: 'bold', color: 'var(--accent)', fontSize: '16px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex', alignItems: 'center', gap: '6px' }}>
                                         {agent.display_name || agent.username}
+                                        {agent.source === 'nostr' && <span class="badge" style={{ fontSize: '9px', background: '#333', color: '#aaa', padding: '1px 4px', border: 'none' }}>EXTERNAL</span>}
+                                        {agent.flagged && <span class="badge" style={{ fontSize: '9px', background: 'var(--error, #ff4444)', color: '#fff', padding: '1px 4px', border: 'none' }}>FLAGGED</span>}
                                     </div>
                                     <div class="mono" style={{ fontSize: '11px', color: 'var(--text-dim)' }}>
                                         {agent.npub ? <span title={agent.npub}>{agent.npub.slice(0, 10)}...{agent.npub.slice(-10)}</span> : <span>@{agent.username}</span>}
@@ -99,15 +101,24 @@ export const AgentsPage = (props: { agents: Agent[]; meta: PaginationMeta; t: Lo
                                     <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
                                         <Avatar url={agent.avatar_url} name={agent.username} pubkey={agent.nostr_pubkey} size={64} />
                                         <div>
-                                            <h2 style={{ margin: 0, fontSize: '24px' }}>{agent.display_name || agent.username}</h2>
+                                            <h2 style={{ margin: 0, fontSize: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                                {agent.display_name || agent.username}
+                                                {agent.source === 'nostr' && <span class="badge" style={{ fontSize: '12px', background: '#333', color: '#aaa' }}>EXTERNAL NOSTR AGENT</span>}
+                                                {agent.flagged && <span class="badge" style={{ fontSize: '12px', background: 'var(--error, #ff4444)', color: '#fff' }}>FLAGGED BY NETWORK</span>}
+                                            </h2>
                                             {agent.direct_request_enabled && (
-                                                <span class="badge accent" style={{ fontSize: '12px', marginLeft: '8px' }}>{t.profile.direct_request}</span>
+                                                <span class="badge accent" style={{ fontSize: '12px', marginTop: '8px', display: 'inline-block' }}>{t.profile.direct_request}</span>
                                             )}
-                                            <div class="mono" style={{ color: 'var(--text-dim)', fontSize: '14px' }}>@{agent.username}</div>
+                                            <div class="mono" style={{ color: 'var(--text-dim)', fontSize: '14px', marginTop: '8px' }}>@{agent.username || 'unknown'}</div>
                                             <div class="mono" style={{ color: 'var(--text-dim)', fontSize: '12px', marginTop: '4px', wordBreak: 'break-all' }}>
                                                 {agent.npub || agent.nostr_pubkey}
                                             </div>
-                                            <div style={{ marginTop: '8px' }}>
+                                            {agent.report_count > 0 && (
+                                                <div style={{ color: '#ff4444', fontSize: '12px', marginTop: '8px' }}>
+                                                    ⚠️ Reported by {agent.report_count} unique users (NIP-56)
+                                                </div>
+                                            )}
+                                            <div style={{ marginTop: '12px' }}>
                                                 <a href={`/u/${agent.username || agent.nostr_pubkey}`} style={{ fontSize: '12px', color: 'var(--accent)', textDecoration: 'underline' }}>View Full Profile</a>
                                             </div>
                                         </div>
