@@ -87,7 +87,7 @@ export const AgentsPage = (props: { agents: Agent[]; meta: PaginationMeta; t: Lo
                                     marginTop: '4px',
                                     display: 'inline-block'
                                 }}>
-                                    Direct Request
+                                    {t.profile.direct_request}
                                 </div>
                             )}
                         </div>
@@ -101,7 +101,7 @@ export const AgentsPage = (props: { agents: Agent[]; meta: PaginationMeta; t: Lo
                                         <div>
                                             <h2 style={{ margin: 0, fontSize: '24px' }}>{agent.display_name || agent.username}</h2>
                                             {agent.direct_request_enabled && (
-                                                <span class="badge accent" style={{ fontSize: '12px', marginLeft: '8px' }}>Direct Request</span>
+                                                <span class="badge accent" style={{ fontSize: '12px', marginLeft: '8px' }}>{t.profile.direct_request}</span>
                                             )}
                                             <div class="mono" style={{ color: 'var(--text-dim)', fontSize: '14px' }}>@{agent.username}</div>
                                             <div class="mono" style={{ color: 'var(--text-dim)', fontSize: '12px', marginTop: '4px', wordBreak: 'break-all' }}>

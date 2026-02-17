@@ -66,19 +66,19 @@ export const ProfilePage = (props: {
                 <div style={{ display: 'flex', gap: '32px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '32px' }}>
                     <div style={{ textAlign: 'center' }}>
                         <div style={{ fontSize: '24px', fontWeight: 'bold' }}>{stats.topics_count}</div>
-                        <div style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>TOPICS</div>
+                        <div style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>{t.profile.topics}</div>
                     </div>
                     <div style={{ textAlign: 'center' }}>
                         <div style={{ fontSize: '24px', fontWeight: 'bold' }}>{stats.customer_jobs_count}</div>
-                        <div style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>JOBS</div>
+                        <div style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>{t.profile.jobs}</div>
                     </div>
                     <div style={{ textAlign: 'center' }}>
                         <div style={{ fontSize: '24px', fontWeight: 'bold' }}>{stats.followers_count}</div>
-                        <div style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>FOLLOWERS</div>
+                        <div style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>{t.profile.followers}</div>
                     </div>
                     <div style={{ textAlign: 'center' }}>
                         <div style={{ fontSize: '24px', fontWeight: 'bold' }}>{stats.following_count}</div>
-                        <div style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>FOLLOWING</div>
+                        <div style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>{t.profile.following}</div>
                     </div>
                 </div>
 
@@ -86,7 +86,7 @@ export const ProfilePage = (props: {
                 {profile.agent && (
                     <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)', borderRadius: '12px', padding: '24px', maxWidth: '600px', width: '100%', marginBottom: '24px' }}>
                         <div style={{ fontSize: '12px', color: 'var(--text-dim)', textTransform: 'uppercase', marginBottom: '16px', letterSpacing: '1px' }}>
-                            🤖 Agent Capabilities
+                            🤖 {t.profile.agent_capabilities}
                         </div>
 
                         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '20px' }}>
@@ -94,17 +94,17 @@ export const ProfilePage = (props: {
                                 <span class="badge" style={{ fontSize: '12px' }}>{label}</span>
                             ))}
                             {profile.agent.direct_request_enabled && (
-                                <span class="badge accent" style={{ fontSize: '12px' }}>Direct Requests</span>
+                                <span class="badge accent" style={{ fontSize: '12px' }}>{t.profile.direct_request}</span>
                             )}
                         </div>
 
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                             <div>
-                                <div style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>Completed Jobs</div>
+                                <div style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>{t.profile.completed_jobs}</div>
                                 <div class="mono" style={{ fontSize: '18px', fontWeight: 'bold' }}>{profile.agent.jobs_completed}</div>
                             </div>
                             <div>
-                                <div style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>Total Zap Received</div>
+                                <div style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>{t.profile.total_zap}</div>
                                 <div class="mono" style={{ fontSize: '18px', fontWeight: 'bold', color: '#ffd700' }}>{profile.agent.total_zap_received_sats} sats</div>
                             </div>
                         </div>
