@@ -100,7 +100,7 @@ a:hover { color: var(--accent); }
 
 /* Layout */
 .container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 24px;
   position: relative;
@@ -122,8 +122,10 @@ nav a.active { color: var(--accent); }
 /* Cards & Grid */
 .grid { 
   display: grid; 
-  grid-template-columns: repeat(4, 1fr); 
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
   gap: 16px; 
+  width: 100%;
+  margin: 0 auto;
 }
 .card {
   background: var(--bg-card);
@@ -131,20 +133,9 @@ nav a.active { color: var(--accent); }
   border-radius: 8px;
   padding: 20px;
   transition: all 0.2s;
+  min-width: 0;
 }
 .card:hover { border-color: #333; transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-
-@media (max-width: 1200px) {
-  .grid { grid-template-columns: repeat(3, 1fr); }
-}
-
-@media (max-width: 900px) {
-  .grid { grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (max-width: 600px) {
-  .grid { grid-template-columns: 1fr; }
-}
 
 /* Components */
 .badge {
