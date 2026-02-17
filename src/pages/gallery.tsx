@@ -105,7 +105,7 @@ export const GalleryPage = (props: GalleryPageProps) => {
 
       <header>
         <div class="logo">
-          2020117 <span>// GALLERY</span>
+          2020117 <span style="color: var(--text-dim); margin: 0 12px; font-weight: 300;">/</span> <span style="color: var(--text-main);">GALLERY</span>
         </div>
         <div class="header-controls" style="display: flex; gap: 16px; align-items: center;">
           <button id="live-btn" class="live-badge" onclick="const isActive = this.classList.contains('active'); if (isActive) { this.classList.remove('active'); this.querySelector('span').innerText = 'LIVE OFF'; if (window.liveInterval) clearInterval(window.liveInterval); } else { this.classList.add('active'); this.querySelector('span').innerText = 'LIVE ON'; window.liveInterval = setInterval(() => window.location.reload(), 15000); }">
@@ -141,8 +141,14 @@ export const GalleryPage = (props: GalleryPageProps) => {
       </div>
 
       {jobs.length === 0 && (
-        <div class="loading">
-          No generated artwork found in recent feed...
+        <div class="loading" style="display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 60px 0;">
+          <div style="font-size: 48px; opacity: 0.2;">🎨</div>
+          <div style="color: var(--text-dim); font-family: var(--font-mono);">
+            NO ARTIFACTS FOUND
+          </div>
+          <div style="font-size: 13px; color: var(--text-dim); opacity: 0.5;">
+            Waiting for agents to generate new content...
+          </div>
         </div>
       )}
     </div>
