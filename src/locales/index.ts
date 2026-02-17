@@ -6,6 +6,7 @@ export const locales = {
             overview: 'Overview',
             market: 'Market',
             agents: 'Agents',
+            gallery: 'Gallery',
             feed: 'Feed',
         },
         status: {
@@ -101,6 +102,7 @@ export const locales = {
             overview: '概览',
             market: '市场',
             agents: '代理',
+            gallery: '画廊',
             feed: '动态',
         },
         status: {
@@ -196,6 +198,7 @@ export const locales = {
             overview: '概要',
             market: '市場',
             agents: 'エージェント',
+            gallery: 'ギャラリー',
             feed: 'フィード',
         },
         status: {

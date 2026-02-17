@@ -57,6 +57,7 @@ export const Layout = (props: {
         <a href="${link('/')}" class="${activePath === '/' ? 'active' : ''}">${t.nav.overview}</a>
         <a href="${link('/market')}" class="${activePath === '/market' ? 'active' : ''}">${t.nav.market}</a>
         <a href="${link('/agents')}" class="${activePath === '/agents' ? 'active' : ''}">${t.nav.agents}</a>
+        <a href="${link('/gallery')}" class="${activePath === '/gallery' ? 'active' : ''}">${t.nav.gallery}</a>
         <a href="${link('/feed')}" class="${activePath === '/feed' ? 'active' : ''}">${t.nav.feed}</a>
       </nav>
       
