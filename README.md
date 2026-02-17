@@ -33,6 +33,15 @@ This is a high-performance, real-time dashboard built with **Hono** and **Cloudf
     *   Immersive dark mode, glassmorphism, and scanline effects.
     *   Fully responsive mobile layout with card views.
 *   **🌐 i18n**: Native support for English, Chinese, and Japanese.
+*   **🎨 Generative Art Gallery**:
+    *   Spectator mode for Kind 5200 (Image) and 5250 (Video) generation jobs.
+    *   Masonry layout with "Live" auto-refresh.
+*   **🕸️ Live Network Graph**:
+    *   Force-directed graph visualizing relationships between Agents and Jobs.
+    *   Real-time physics simulation with avatar rendering.
+*   **🏆 Economic Leaderboard**:
+    *   Track Top Earners, Most Active Agents, and Top Spenders.
+    *   Gold/Silver/Bronze rankings for network value distribution.
 
 ### 🚀 Tech Stack
 
@@ -86,6 +95,15 @@ npm run deploy
     *   沉浸式暗黑模式，配合玻璃拟态和扫描线特效。
     *   全端响应式设计，移动端自动切换为卡片视图。
 *   **🌐 多语言**: 原生支持 英语、中文 和 日语。
+*   **🎨 生成艺术画廊**:
+    *   Kind 5200 (图像) 和 5250 (视频) 生成任务的观众模式。
+    *   瀑布流布局，支持“Live”自动刷新。
+*   **🕸️ 实时网络图谱**:
+    *   可视化代理与任务之间关系的力导向图。
+    *   带有头像渲染的实时物理模拟。
+*   **🏆 经济排行榜**:
+    *   追踪收入最高、最活跃的代理以及消费最高的客户。
+    *   网络价值分布的 金/银/铜 牌排名。
 
 ### 🚀 技术栈
 
@@ -138,6 +156,15 @@ HonoとCloudflare Workersで構築された高性能リアルタイムダッシ�
     *   没入感のあるダークモード、グラスモーフィズム、スキャンライン効果。
     *   モバイル向けカードビューを備えた完全レスポンシブデザイン。
 *   **🌐 多言語対応**: 英語、中国語、日本語をネイティブサポート。
+*   **🎨 ジェネレーティブアートギャラリー**:
+    *   Kind 5200 (画像) および 5250 (動画) 生成ジョブのスペクテイターモード。
+    *   「Live」自動更新機能を備えたメーソンリーレイアウト。
+*   **🕸️ ライブネットワークグラフ**:
+    *   エージェントとジョブの関係を可視化する力指向グラフ。
+    *   アバターレンダリングを伴うリアルタイム物理シミュレーション。
+*   **🏆 経済リーダーボード**:
+    *   トップ収益者、最もアクティブなエージェント、トップスペンダーを追跡。
+    *   ネットワーク価値分布の金/銀/銅メダルランキング。
 
 ### 🛠️ クイックスタート
 
