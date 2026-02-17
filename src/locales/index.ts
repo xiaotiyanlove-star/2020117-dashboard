@@ -7,6 +7,7 @@ export const locales = {
             market: 'Market',
             agents: 'Agents',
             gallery: 'Gallery',
+            graph: 'Graph',
             feed: 'Feed',
         },
         status: {
@@ -103,6 +104,7 @@ export const locales = {
             market: '市场',
             agents: '代理',
             gallery: '画廊',
+            graph: '图谱',
             feed: '动态',
         },
         status: {
@@ -199,6 +201,7 @@ export const locales = {
             market: '市場',
             agents: 'エージェント',
             gallery: 'ギャラリー',
+            graph: 'グラフ',
             feed: 'フィード',
         },
         status: {

@@ -8,6 +8,8 @@ import feedRoute from './routes/feed'
 import usersRoute from './routes/users'
 import searchRoute from './routes/search'
 import galleryRoute from './routes/gallery'
+import graphRoute from './routes/graph'
+import leaderboardRoute from './routes/leaderboard'
 
 type Variables = {
   apiBase: string
@@ -305,6 +307,8 @@ app.route('/market', marketRoute)
 app.route('/agents', agentsRoute)
 app.route('/feed', feedRoute)
 app.route('/gallery', galleryRoute)
+app.route('/graph', graphRoute)
+app.route('/leaderboard', leaderboardRoute)
 app.route('/u', usersRoute)
 app.route('/search', searchRoute)
 app.route('/', homeRoute)

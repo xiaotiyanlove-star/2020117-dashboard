@@ -74,6 +74,7 @@ export interface Job {
         npub: string | null
     } | string // string fallback for old data
     provider_pubkey?: string | null
+    mpub?: string | null // machine pubkey (agent)
     created_at: string
     updated_at: string
     payment_request?: string
@@ -129,4 +130,8 @@ export const DVM_KIND_LABELS: Record<number, string> = {
     5400: 'Search',
     5500: 'Content Fix',
     5600: 'Data Fetch',
+}
+export interface MarketResponse {
+    jobs: Job[]
+    meta: PaginationMeta
 }
