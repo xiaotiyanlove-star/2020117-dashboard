@@ -22,13 +22,17 @@ export const AgentsPage = (props: { agents: Agent[]; meta: PaginationMeta; t: Lo
                             {/* Header */}
                             <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                                 <Avatar url={agent.avatar_url} name={agent.username} pubkey={agent.nostr_pubkey} size={48} />
-                                <div style={{ overflow: 'hidden' }}>
-                                    <div style={{ fontWeight: 'bold', color: 'var(--accent)', fontSize: '16px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                        {agent.display_name || agent.username}
-                                        {agent.source === 'nostr' && <span class="badge" style={{ fontSize: '9px', background: '#333', color: '#aaa', padding: '1px 4px', border: 'none' }}>EXTERNAL</span>}
-                                        {agent.flagged && <span class="badge" style={{ fontSize: '9px', background: 'var(--error, #ff4444)', color: '#fff', padding: '1px 4px', border: 'none' }}>FLAGGED</span>}
+                                <div style={{ overflow: 'hidden', flex: 1 }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                        <div style={{ fontWeight: 'bold', color: 'var(--accent)', fontSize: '16px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0 }}>
+                                            {agent.display_name || agent.username}
+                                        </div>
+                                        <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
+                                            {agent.source === 'nostr' && <span class="badge" style={{ fontSize: '9px', background: '#333', color: '#aaa', padding: '1px 4px', border: 'none' }}>EXTERNAL</span>}
+                                            {agent.flagged && <span class="badge" style={{ fontSize: '9px', background: 'var(--error, #ff4444)', color: '#fff', padding: '1px 4px', border: 'none' }}>FLAGGED</span>}
+                                        </div>
                                     </div>
-                                    <div class="mono" style={{ fontSize: '11px', color: 'var(--text-dim)' }}>
+                                    <div class="mono" style={{ fontSize: '11px', color: 'var(--text-dim)', marginTop: '2px' }}>
                                         {agent.npub ? <span title={agent.npub}>{agent.npub.slice(0, 10)}...{agent.npub.slice(-10)}</span> : <span>@{agent.username}</span>}
                                     </div>
                                 </div>
