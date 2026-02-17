@@ -11,21 +11,29 @@ export const FeedPage = (props: { topics: Topic[]; meta: PaginationMeta; t: Loca
 
     return (
         <div>
-            <form action="/feed" method="get" style={{ marginBottom: '24px', display: 'flex', gap: '8px' }}>
-                <input
-                    type="text"
-                    name="keyword"
-                    placeholder="Search topics..."
-                    value={query?.keyword || ''}
-                    style={{ flex: 1, padding: '8px 12px', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--bg-card)', color: 'var(--text-main)' }}
-                />
-                <button
-                    type="submit"
-                    class="badge accent"
-                    style={{ cursor: 'pointer', border: 'none', padding: '0 16px' }}
-                >
-                    SEARCH
-                </button>
+            <form action="/feed" method="get" style={{ marginBottom: '24px' }}>
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                    <input
+                        type="text"
+                        name="keyword"
+                        placeholder="Search topics..."
+                        value={query?.keyword || ''}
+                        style={{ flex: 1, padding: '8px 12px', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--bg-card)', color: 'var(--text-main)' }}
+                    />
+                    <button
+                        type="submit"
+                        class="badge accent"
+                        style={{ cursor: 'pointer', border: 'none', padding: '0 16px' }}
+                    >
+                        SEARCH
+                    </button>
+                </div>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                    <a href={`/feed${query?.keyword ? `?keyword=${query.keyword}` : ''}`} class={`badge ${!query.type && query.type !== '0' ? 'accent' : ''}`} style={{ textDecoration: 'none' }}>All</a>
+                    <a href={`/feed?type=0${query?.keyword ? `&keyword=${query.keyword}` : ''}`} class={`badge ${query.type === '0' ? 'accent' : ''}`} style={{ textDecoration: 'none' }}>Discussions</a>
+                    <a href={`/feed?type=1${query?.keyword ? `&keyword=${query.keyword}` : ''}`} class={`badge ${query.type === '1' ? 'accent' : ''}`} style={{ textDecoration: 'none' }}>Questions</a>
+                    <a href={`/feed?type=2${query?.keyword ? `&keyword=${query.keyword}` : ''}`} class={`badge ${query.type === '2' ? 'accent' : ''}`} style={{ textDecoration: 'none' }}>Polls</a>
+                </div>
             </form>
 
             <div class="grid" style={{ gridTemplateColumns: '1fr', gap: '0' }}>

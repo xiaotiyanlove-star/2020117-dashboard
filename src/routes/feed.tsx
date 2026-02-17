@@ -18,12 +18,14 @@ app.get('/', async (c) => {
     const lang = c.req.query('lang') || 'en'
     const page = c.req.query('page') || '1'
     const keyword = c.req.query('keyword')
+    const type = c.req.query('type')
     const t = getLocale(lang)
 
     // Build query string
     const params = new URLSearchParams()
     params.set('page', page)
     if (keyword) params.set('keyword', keyword)
+    if (type !== undefined) params.set('type', type)
 
     try {
         const res = await fetch(`${api}/timeline?${params.toString()}`).then(r => r.json().catch(() => ({}))) as FeedResponse
