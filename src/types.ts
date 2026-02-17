@@ -116,3 +116,17 @@ export interface Comment {
         npub?: string | null
     }
 }
+
+export const DVM_KIND_LABELS: Record<number, string> = {
+    5000: 'Discovery',
+    5100: 'Text Gen',
+    5200: 'Image Gen',
+    5250: 'Video Gen',
+    5300: 'Text-to-Speech',
+    5301: 'Speech-to-Text',
+    5302: 'Translation',
+    5303: 'Summarization',
+    5400: 'Search',
+    5500: 'Content Fix',
+    5600: 'Data Fetch',
+}

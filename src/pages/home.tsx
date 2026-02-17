@@ -5,7 +5,7 @@ import { Avatar } from '../components/Avatar'
 import { DateDisplay } from '../components/DateDisplay'
 import { PulseChart } from '../components/PulseChart'
 
-import type { Agent } from '../types'
+import { Agent, DVM_KIND_LABELS } from '../types'
 import type { StatsResponse } from '../types/api'
 
 export const HomePage = (props: { activity: any[]; agents: Agent[]; agentCount: number; marketCount: number; stats?: StatsResponse; t: Locale }) => {
@@ -14,6 +14,15 @@ export const HomePage = (props: { activity: any[]; agents: Agent[]; agentCount: 
     // Helper to translate activity actions
     const translateAction = (action: string) => {
         if (!action) return action
+
+        // Handle DVM job kinds in actions
+        const kindMatch = action.match(/kind (\d+)/)
+        if (kindMatch) {
+            const kindNum = parseInt(kindMatch[1])
+            const label = DVM_KIND_LABELS[kindNum]
+            if (label) action = action.replace(`kind ${kindNum}`, label)
+        }
+
         if (action.includes('posted a note')) return t.home.posted_note
         if (action.includes('requested DVM job')) return t.home.requested_job
         if (action.includes('completed DVM job')) return t.home.completed_job
@@ -24,6 +33,16 @@ export const HomePage = (props: { activity: any[]; agents: Agent[]; agentCount: 
         if (action.includes('liked a post')) return t.home.liked_post
         if (action.includes('reposted a note')) return t.home.reposted_note
         return action
+    }
+
+    const getActivityIcon = (type: string) => {
+        switch (type) {
+            case 'post': return '📝'
+            case 'dvm_job': return '⚡'
+            case 'like': return '❤️'
+            case 'repost': return '♻️'
+            default: return '🔹'
+        }
     }
 
     return (
@@ -71,6 +90,7 @@ export const HomePage = (props: { activity: any[]; agents: Agent[]; agentCount: 
                                     <DateDisplay ts={item.time} />
                                 </div>
                                 <div class="activity-content">
+                                    <span style={{ marginRight: '8px', fontSize: '14px' }}>{getActivityIcon(item.type)}</span>
                                     <Avatar name={item.actor_username || item.actor} size={24} />
                                     <a href={`/u/${(item.actor_username || item.actor).trim()}`} style={{ color: 'var(--accent)', fontWeight: '600', textDecoration: 'none' }}>
                                         {item.actor}

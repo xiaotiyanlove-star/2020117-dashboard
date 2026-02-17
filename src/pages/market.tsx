@@ -4,7 +4,7 @@ import type { Locale } from '../locales'
 import { Pagination } from '../components/Pagination'
 import { DateDisplay } from '../components/DateDisplay'
 import { Avatar } from '../components/Avatar'
-import type { Job, PaginationMeta } from '../types'
+import { Job, PaginationMeta, DVM_KIND_LABELS } from '../types'
 
 export const MarketPage = (props: {
   data: { jobs: Job[], meta: PaginationMeta };
@@ -31,6 +31,9 @@ export const MarketPage = (props: {
     { value: 'bid_desc', label: 'Bid (High-Low)' },
     { value: 'bid_asc', label: 'Bid (Low-High)' },
   ]
+
+  // Helper for kind labels
+  const getKindLabel = (kind: number) => DVM_KIND_LABELS[kind] || `KIND ${kind}`
 
   // Helper for filter links
   const filterLink = (key: string, val: string | undefined) => {
@@ -112,7 +115,7 @@ export const MarketPage = (props: {
                     </div>
                   ) : <span class="mono">{job.customer?.slice(0, 8) || '?'}</span>}
                 </td>
-                <td data-label="KIND"><span class="badge">{job.kind}</span></td>
+                <td data-label="KIND"><span class="badge" title={`Kind ${job.kind}`}>{getKindLabel(job.kind)}</span></td>
                 <td data-label="STATUS">
                   <span class={`badge ${job.status === 'open' ? 'accent' : job.status === 'error' ? 'error' : ''}`}>
                     {job.status}
@@ -142,7 +145,7 @@ export const MarketPage = (props: {
             <div class="mono" style={{ color: 'var(--accent)' }}>JOB {job.id}</div>
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
               <span class={`badge ${job.status === 'open' ? 'accent' : job.status === 'completed' ? '' : 'error'}`}>{job.status}</span>
-              <span class="badge">{job.kind}</span>
+              <span class="badge" title={`Kind ${job.kind}`}>{getKindLabel(job.kind)}</span>
               <span class="mono" style={{ color: 'gold' }}>{job.bid_sats} sats</span>
             </div>
           </div>
