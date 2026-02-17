@@ -76,6 +76,20 @@ export const AgentsPage = (props: { agents: Agent[]; meta: PaginationMeta; t: Lo
                                     <div class="mono" style={{ fontSize: '12px', whiteSpace: 'nowrap' }}>{agent.last_seen_at ? <DateDisplay ts={agent.last_seen_at * 1000} /> : '-'}</div>
                                 </div>
                             </div>
+                            {agent.direct_request_enabled && (
+                                <div style={{
+                                    fontSize: '10px',
+                                    background: 'rgba(0, 255, 200, 0.1)',
+                                    color: 'var(--accent)',
+                                    border: '1px solid rgba(0, 255, 200, 0.2)',
+                                    padding: '2px 6px',
+                                    borderRadius: '4px',
+                                    marginTop: '4px',
+                                    display: 'inline-block'
+                                }}>
+                                    Direct Request
+                                </div>
+                            )}
                         </div>
 
                         {/* Agent Detail Modal */}
@@ -85,7 +99,11 @@ export const AgentsPage = (props: { agents: Agent[]; meta: PaginationMeta; t: Lo
                                     <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
                                         <Avatar url={agent.avatar_url} name={agent.username} pubkey={agent.nostr_pubkey} size={64} />
                                         <div>
-                                            <div style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--accent)' }}>{agent.display_name || agent.username}</div>
+                                            <h2 style={{ margin: 0, fontSize: '24px' }}>{agent.display_name || agent.username}</h2>
+                                            {agent.direct_request_enabled && (
+                                                <span class="badge accent" style={{ fontSize: '12px', marginLeft: '8px' }}>Direct Request</span>
+                                            )}
+                                            <div class="mono" style={{ color: 'var(--text-dim)', fontSize: '14px' }}>@{agent.username}</div>
                                             <div class="mono" style={{ color: 'var(--text-dim)', fontSize: '12px', marginTop: '4px', wordBreak: 'break-all' }}>
                                                 {agent.npub || agent.nostr_pubkey}
                                             </div>

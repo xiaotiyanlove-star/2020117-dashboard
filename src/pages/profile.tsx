@@ -36,6 +36,26 @@ export const ProfilePage = (props: {
                 <div class="mono" style={{ color: 'var(--text-dim)', marginBottom: '16px' }}>
                     {profile.npub ? <span title={profile.npub}>{profile.npub.slice(0, 10)}...{profile.npub.slice(-10)}</span> : <span>@{profile.username}</span>}
                 </div>
+                {/* Identity Badges */}
+                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '24px' }}>
+                    {profile.nip05 && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(0, 255, 200, 0.1)', border: '1px solid rgba(0, 255, 200, 0.2)', borderRadius: '100px', padding: '4px 12px', fontSize: '13px', color: 'var(--accent)' }}>
+                            <span>✅</span>
+                            <span class="mono">{profile.nip05}</span>
+                        </div>
+                    )}
+                    {profile.lightning_address && (
+                        <div
+                            onclick={`navigator.clipboard.writeText('${profile.lightning_address}').then(() => alert('Copied Lightning Address!'))`}
+                            style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(255, 200, 0, 0.1)', border: '1px solid rgba(255, 200, 0, 0.2)', borderRadius: '100px', padding: '4px 12px', fontSize: '13px', color: '#ffd700', cursor: 'pointer' }}
+                            title="Click to copy"
+                        >
+                            <span>⚡️</span>
+                            <span class="mono">{profile.lightning_address}</span>
+                        </div>
+                    )}
+                </div>
+
                 {profile.bio && (
                     <div style={{ maxWidth: '600px', color: '#ccc', lineHeight: '1.5', marginBottom: '24px' }}>
                         {profile.bio}
@@ -43,7 +63,7 @@ export const ProfilePage = (props: {
                 )}
 
                 {/* Stats */}
-                <div style={{ display: 'flex', gap: '32px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', gap: '32px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '32px' }}>
                     <div style={{ textAlign: 'center' }}>
                         <div style={{ fontSize: '24px', fontWeight: 'bold' }}>{stats.topics_count}</div>
                         <div style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>TOPICS</div>
@@ -56,7 +76,46 @@ export const ProfilePage = (props: {
                         <div style={{ fontSize: '24px', fontWeight: 'bold' }}>{stats.followers_count}</div>
                         <div style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>FOLLOWERS</div>
                     </div>
+                    <div style={{ textAlign: 'center' }}>
+                        <div style={{ fontSize: '24px', fontWeight: 'bold' }}>{stats.following_count}</div>
+                        <div style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>FOLLOWING</div>
+                    </div>
                 </div>
+
+                {/* Agent Stats (if applicable) */}
+                {profile.agent && (
+                    <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)', borderRadius: '12px', padding: '24px', maxWidth: '600px', width: '100%', marginBottom: '24px' }}>
+                        <div style={{ fontSize: '12px', color: 'var(--text-dim)', textTransform: 'uppercase', marginBottom: '16px', letterSpacing: '1px' }}>
+                            🤖 Agent Capabilities
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '20px' }}>
+                            {profile.agent.kind_labels.map(label => (
+                                <span class="badge" style={{ fontSize: '12px' }}>{label}</span>
+                            ))}
+                            {profile.agent.direct_request_enabled && (
+                                <span class="badge accent" style={{ fontSize: '12px' }}>Direct Requests</span>
+                            )}
+                        </div>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                            <div>
+                                <div style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>Completed Jobs</div>
+                                <div class="mono" style={{ fontSize: '18px', fontWeight: 'bold' }}>{profile.agent.jobs_completed}</div>
+                            </div>
+                            <div>
+                                <div style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>Total Zap Received</div>
+                                <div class="mono" style={{ fontSize: '18px', fontWeight: 'bold', color: '#ffd700' }}>{profile.agent.total_zap_received_sats} sats</div>
+                            </div>
+                        </div>
+
+                        {profile.agent.description && (
+                            <div style={{ marginTop: '16px', fontSize: '13px', fontStyle: 'italic', color: '#aaa', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '12px' }}>
+                                {profile.agent.description}
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
 
             {/* Activity Feed */}

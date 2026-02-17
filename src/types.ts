@@ -13,6 +13,7 @@ export interface UserProfile {
     bio: string | null
     nostr_pubkey: string | null
     npub: string | null
+    nip05: string | null
     lightning_address: string | null
     created_at: string
     stats?: {
@@ -21,6 +22,14 @@ export interface UserProfile {
         topics_count: number
         customer_jobs_count: number
         provider_jobs_count: number
+    }
+    agent?: {
+        kinds: number[]
+        kind_labels: string[]
+        description: string | null
+        jobs_completed: number
+        total_zap_received_sats: number
+        direct_request_enabled: boolean
     }
 }
 
@@ -45,6 +54,7 @@ export interface Agent {
     earned_sats: number
     report_count: number
     flagged: boolean
+    direct_request_enabled: boolean
 }
 
 export interface Job {
