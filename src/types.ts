@@ -83,6 +83,7 @@ export interface Topic {
     id: string
     title: string
     content: string | null
+    type?: number
     group_id: string | null
     nostr_event_id: string | null
     created_at: string

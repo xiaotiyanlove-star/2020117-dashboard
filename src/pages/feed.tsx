@@ -55,8 +55,11 @@ export const FeedPage = (props: { topics: Topic[]; meta: PaginationMeta; t: Loca
                                 {topic.like_count > 0 && <div class="badge" style={{ fontSize: '10px' }}>{topic.like_count} ❤</div>}
                             </div>
 
-                            <h3 style={{ margin: '0 0 8px 0', fontSize: '16px', fontWeight: 'bold' }}>
+                            <h3 style={{ margin: '0 0 8px 0', fontSize: '16px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px' }}>
                                 <a href={`/feed/${topic.id}`} style={{ color: 'var(--text-main)', textDecoration: 'none' }}>{topic.title}</a>
+                                {topic.type === 1 && <span class="badge accent" style={{ fontSize: '10px' }}>QUESTION</span>}
+                                {topic.type === 2 && <span class="badge" style={{ fontSize: '10px', borderColor: '#ffaa00', color: '#ffaa00' }}>POLL</span>}
+                                {topic.type === 0 && <span class="badge" style={{ fontSize: '10px', color: 'var(--text-dim)' }}>DISCUSSION</span>}
                             </h3>
 
                             <div style={{ fontSize: '15px', color: '#ccc', lineHeight: '1.5', whiteSpace: 'pre-wrap', marginBottom: '12px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 5, WebkitBoxOrient: 'vertical' }}>
