@@ -26,7 +26,7 @@ async function fetchAgents(apiBase: string): Promise<Agent[]> {
 async function fetchRecentJobs(apiBase: string): Promise<Job[]> {
     try {
         // Fetch enough jobs to get a good sampling of recent spenders
-        const res = await fetch(`${apiBase}/dvm/market?limit=200`)
+        const res = await fetch(`${apiBase}/dvm/market?limit=200&status=all`)
         const data = await res.json() as { jobs: Job[] }
         return data.jobs || []
     } catch (e) {
@@ -79,8 +79,10 @@ async function buildLeaderboardData(apiBase: string) {
             avatar_url: null
         } : job.customer
 
-        const pubkey = customer.nostr_pubkey || 'unknown'
+        // @ts-ignore - API sometimes returns 'pubkey' instead of 'nostr_pubkey'
+        const pubkey = customer.nostr_pubkey || customer.pubkey || 'unknown'
         if (pubkey === 'unknown') return
+
 
         const current = spenderMap.get(pubkey) || {
             id: pubkey,
@@ -117,7 +119,7 @@ app.get('/', async (c) => {
     const t = getLocale(lang)
 
     // Cache Key
-    const cacheKey = `leaderboard:data`
+    const cacheKey = `leaderboard:data:v3`
     let leaderboardData = null
 
     // Try Cache
